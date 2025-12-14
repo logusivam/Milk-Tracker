@@ -31,8 +31,9 @@
         </div>
         <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-14 justify-between">
           <p class="text-white text-base font-normal leading-normal flex-1 truncate">Price per litre</p>
-          <div class="shrink-0"><p class="text-white text-base font-normal leading-normal">$2.50</p></div>
-        </div>
+          <div class="shrink-0"><input id="priceInput" type="text" value="Rs. 2.50"
+              class="bg-transparent text-white text-base font-normal leading-normal text-right w-28 outline-none" /></div>
+          </div>
         <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-14 justify-between">
           <p class="text-white text-base font-normal leading-normal flex-1 truncate">Reset current month's data</p>
           <div class="shrink-0">
@@ -58,8 +59,15 @@
           </div>
         </div>
         <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-14 justify-between">
-          <p class="text-white text-base font-normal leading-normal flex-1 truncate">Theme</p>
-          <div class="shrink-0"><p class="text-white text-base font-normal leading-normal">Light</p></div>
+          <p class="text-white text-base font-normal leading-normal flex-1 truncate">Default Milk Value</p>
+          <div class="shrink-0 flex items-center gap-2">
+            <input id="milkValue" type="text" inputmode="numeric" value="400"
+              class="bg-transparent text-white text-base font-normal leading-normal w-16 text-right outline-none text-sm" />
+            <select id="milkUnit" class="bg-transparent text-white text-base font-normal leading-normal outline-none text-sm">
+              <option value="ml" class="text-black">ML</option>
+              <option value="l" class="text-black">L</option>
+            </select>
+          </div>
         </div>
       </div>
       <div>
