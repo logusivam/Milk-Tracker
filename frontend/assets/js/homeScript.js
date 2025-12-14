@@ -19,7 +19,6 @@
 
     const year = date.getFullYear();
     const month = date.getMonth();
-
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const today = new Date();
@@ -40,8 +39,13 @@
         month === today.getMonth() &&
         year === today.getFullYear();
 
+      const selectedDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
       calendarGrid.innerHTML += `
-        <button class="h-12 w-full text-white text-sm font-medium leading-normal">
+        <button
+          class="h-12 w-full text-white text-sm font-medium leading-normal"
+          onclick="openAddEntry('${selectedDate}')"
+        >
           <div class="flex size-full items-center justify-center rounded-full ${
             isToday ? "bg-black" : ""
           }">
@@ -50,6 +54,10 @@
         </button>
       `;
     }
+  }
+
+  function openAddEntry(date) {
+    window.location.href = `addEntry.html?date=${date}`;
   }
 
   prevBtn.addEventListener("click", () => {
@@ -63,4 +71,3 @@
   });
 
   renderCalendar(currentDate);
-
