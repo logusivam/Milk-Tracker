@@ -43,8 +43,8 @@
 
       calendarGrid.innerHTML += `
         <button
-          class="h-12 w-full text-white text-sm font-medium leading-normal"
-          onclick="openAddEntry('${selectedDate}')"
+          class="h-12 w-full text-white text-sm font-medium leading-normal date-btn"
+          data-date="${selectedDate}"
         >
           <div class="flex size-full items-center justify-center rounded-full ${
             isToday ? "bg-black" : ""
@@ -71,3 +71,12 @@
   });
 
   renderCalendar(currentDate);
+
+  
+ calendarGrid.addEventListener("click", (e) => {
+   const btn = e.target.closest(".date-btn");
+   if (!btn) return;
+ 
+   const date = btn.dataset.date;
+   openAddEntry(date);
+ });
