@@ -39,74 +39,77 @@ export const register = async (req, res) => {
    LOGIN
 ====================== */
 export const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user)
-      return res.status(401).json({ message: "Invalid credentials" });
+  const user = await User.findOne({ email });
+  if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match)
-      return res.status(401).json({ message: "Invalid credentials" });
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) return res.status(401).json({ message: "Invalid credentials" });
 
-    const jti = crypto.randomUUID();
+  const jti = crypto.randomUUID();
 
-    await RefreshToken.create({
-      tokenId: jti,
-      userId: user._id,
-      revoked: false,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-    });
+  // 🔒 Revoke ALL previous refresh tokens (single-session policy)
+  await RefreshToken.updateMany(
+    { userId: user._id },
+    { revoked: true }
+  );
 
-    const accessToken = signAccessToken({
-      id: user._id,
-      email: user.email
-    });
+  await RefreshToken.create({
+    tokenId: jti,
+    userId: user._id,
+    revoked: false,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+  });
 
-    const refreshToken = signRefreshToken({
-      id: user._id,
-      jti
-    });
+  console.info("Created refresh token entry for user", String(user._id), "jti:", jti);
 
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "development" ? false : true,
-      sameSite: "None",
-      path: "/",
-    };
+  const accessToken = signAccessToken({ id: user._id });
+  const refreshToken = signRefreshToken({ id: user._id, jti });
 
-    res.cookie("refreshToken", refreshToken, cookieOptions);
+  const isProd = process.env.NODE_ENV === "production";
 
-    res.json({
-      accessToken,
-      user: {
-        id: user._id,
-        email: user.email
-      }
-    });
-  } catch {
-    res.status(500).json({ message: "Login failed" });
-  }
+  // 🧹 CLEAR any old cookie FIRST
+  res.clearCookie("refreshToken", {
+    path: "/",
+    secure: isProd,
+    sameSite: isProd ? "None" : "Lax"
+  });
+
+  // 🍪 SET correct cookie
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "None" : "Lax",
+    path: "/",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  });
+
+  res.json({ accessToken });
 };
+
+
 
 /* ======================
    REFRESH TOKEN
 ====================== */
 export const refresh = async (req, res) => {
   try {
-    const token = req.cookies.refreshToken;
+    const token = req.cookies?.refreshToken;
     if (!token) return res.sendStatus(401);
 
     const payload = verifyToken(token);
+    console.info("Incoming refresh jti:", payload.jti);
 
-    // ✅ must exist AND not revoked AND not expired
     const stored = await RefreshToken.findOne({
       tokenId: payload.jti,
       revoked: false
     });
 
-    if (!stored) return res.sendStatus(403);
+    if (!stored) {
+      console.warn("Refresh token not found or revoked:", payload.jti);
+      return res.sendStatus(403);
+    }
 
     if (stored.expiresAt <= new Date()) {
       stored.revoked = true;
@@ -114,69 +117,33 @@ export const refresh = async (req, res) => {
       return res.sendStatus(403);
     }
 
-    // 🔄 rotate refresh token
-    stored.revoked = true;
-    await stored.save();
-
-    const newJti = crypto.randomUUID();
-
-    await RefreshToken.create({
-      tokenId: newJti,
-      userId: payload.id,
-      revoked: false,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-    });
-
     const newAccessToken = signAccessToken({ id: payload.id });
 
-    const newRefreshToken = signRefreshToken({
-      id: payload.id,
-      jti: newJti
-    });
-
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
-      path: "/"
-    };
-
-    res.cookie("refreshToken", newRefreshToken, cookieOptions);
-
     res.json({ accessToken: newAccessToken });
-  } catch {
+  } catch (err) {
+    console.error("Refresh error:", err.message);
     res.sendStatus(403);
   }
 };
+
+
 
 /* ======================
    LOGOUT
 ====================== */
 export const logout = async (req, res) => {
-  try {
-    const token = req.cookies.refreshToken;
-    if (!token) return res.sendStatus(204);
+  const isProd = process.env.NODE_ENV === "production";
 
-    const payload = verifyToken(token);
+  res.clearCookie("refreshToken", {
+    path: "/",
+    secure: isProd,
+    sameSite: isProd ? "None" : "Lax"
+  });
 
-    // 🔐 revoke refresh token → blocks ALL future access
-    await RefreshToken.updateOne(
-      { tokenId: payload.jti },
-      { revoked: true }
-    );
-
-    res.clearCookie("refreshToken", {
-      path: "/",
-      // clearCookie may require the same security/sameSite attributes in some environments
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "None"
-    });
-
-    res.sendStatus(204);
-  } catch {
-    res.sendStatus(204);
-  }
+  res.sendStatus(204);
 };
+
+
 
 /* ======================
    ME (ACCESS TOKEN VALIDATION)
