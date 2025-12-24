@@ -7,7 +7,7 @@ const app = express();
 const allowedOrigins = [
   "http://127.0.0.1:5500",
   "http://localhost:5500",
-  "http://localhost:3000" // future-proof (React, etc.)
+  "http://localhost:3000", "https://milk-tracker-s4i1.onrender.com"
 ];
 
 app.use(
