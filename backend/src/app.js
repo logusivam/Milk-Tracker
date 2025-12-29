@@ -2,6 +2,9 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import apiRoutes from "./api/index.js";
+import { startDashboardWorker } from "./workers/central.worker.js";
+
+startDashboardWorker();
 
 const app = express();
 
