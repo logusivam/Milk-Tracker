@@ -53,12 +53,12 @@
             </button></a>
           </div>
         </div>
-        <div class="flex flex-wrap gap-4 p-4">
-          <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-[#363636]">
+        <div class="flex flex-wrap gap-4 p-4" id="cards">
+          <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-[#363636]" id="totalLitresCard">
             <p class="text-white text-base font-medium leading-normal">Total Litres</p>
             <p class="text-white tracking-light text-2xl font-bold leading-tight">25 L</p>
           </div>
-          <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-[#363636]">
+          <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-[#363636]" id="totalCostCard">
             <p class="text-white text-base font-medium leading-normal">Total Cost</p>
             <p class="text-white tracking-light text-2xl font-bold leading-tight">$37.50</p>
           </div>
@@ -88,54 +88,8 @@
             </div>
           </div>
         </div>
-        <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-[72px] py-2 justify-between">
-          <div class="flex flex-col justify-center">
-            <p class="text-white text-base font-medium leading-normal line-clamp-1">July 1, 2024</p>
-            <p class="text-[#adadad] text-sm font-normal leading-normal line-clamp-2">2 L</p>
-          </div>
-          <div class="shrink-0"><p class="text-white text-base font-normal leading-normal">$3.00</p></div>
-        </div>
-        <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-[72px] py-2 justify-between">
-          <div class="flex flex-col justify-center">
-            <p class="text-white text-base font-medium leading-normal line-clamp-1">July 2, 2024</p>
-            <p class="text-[#adadad] text-sm font-normal leading-normal line-clamp-2">1.5 L</p>
-          </div>
-          <div class="shrink-0"><p class="text-white text-base font-normal leading-normal">$2.25</p></div>
-        </div>
-        <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-[72px] py-2 justify-between">
-          <div class="flex flex-col justify-center">
-            <p class="text-white text-base font-medium leading-normal line-clamp-1">July 3, 2024</p>
-            <p class="text-[#adadad] text-sm font-normal leading-normal line-clamp-2">2.5 L</p>
-          </div>
-          <div class="shrink-0"><p class="text-white text-base font-normal leading-normal">$3.75</p></div>
-        </div>
-        <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-[72px] py-2 justify-between">
-          <div class="flex flex-col justify-center">
-            <p class="text-white text-base font-medium leading-normal line-clamp-1">July 4, 2024</p>
-            <p class="text-[#adadad] text-sm font-normal leading-normal line-clamp-2">1 L</p>
-          </div>
-          <div class="shrink-0"><p class="text-white text-base font-normal leading-normal">$1.50</p></div>
-        </div>
-        <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-[72px] py-2 justify-between">
-          <div class="flex flex-col justify-center">
-            <p class="text-white text-base font-medium leading-normal line-clamp-1">July 5, 2024</p>
-            <p class="text-[#adadad] text-sm font-normal leading-normal line-clamp-2">2 L</p>
-          </div>
-          <div class="shrink-0"><p class="text-white text-base font-normal leading-normal">$3.00</p></div>
-        </div>
-        <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-[72px] py-2 justify-between">
-          <div class="flex flex-col justify-center">
-            <p class="text-white text-base font-medium leading-normal line-clamp-1">July 6, 2024</p>
-            <p class="text-[#adadad] text-sm font-normal leading-normal line-clamp-2">1.5 L</p>
-          </div>
-          <div class="shrink-0"><p class="text-white text-base font-normal leading-normal">$2.25</p></div>
-        </div>
-        <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-[72px] py-2 justify-between">
-          <div class="flex flex-col justify-center">
-            <p class="text-white text-base font-medium leading-normal line-clamp-1">July 7, 2024</p>
-            <p class="text-[#adadad] text-sm font-normal leading-normal line-clamp-2">2.5 L</p>
-          </div>
-          <div class="shrink-0"><p class="text-white text-base font-normal leading-normal">$3.75</p></div>
+        <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-[72px] py-2 justify-between" id="purchase-history">
+          <!-- History items will be rendered here by JavaScript -->
         </div>
       </div>
       <div>
