@@ -1,16 +1,15 @@
+// settings.controller.js
 import Settings from "../../../models/settings.model.js";
-import settingsCache from "../../../utils/cache.js";
-
-const CACHE_KEY_PREFIX = "settings_";
+import cache, { settingsCacheKey } from "../../../utils/cache.js";
 
 export const getSettings = async (req, res) => {
   try {
     const userId = req.user.id;
-    const cacheKey = `${CACHE_KEY_PREFIX}${userId}`;
+    const cacheKey = settingsCacheKey(userId);
 
-    const cachedData = settingsCache.get(cacheKey);
-    if (cachedData) {
-      return res.json(cachedData);
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return res.json(cached);
     }
 
     const settings = await Settings.findOne({ user_id: userId }).lean();
@@ -18,7 +17,7 @@ export const getSettings = async (req, res) => {
       return res.status(404).json({ message: "Settings not found" });
     }
 
-    settingsCache.set(cacheKey, settings);
+    cache.set(cacheKey, settings);
     res.json(settings);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch settings" });
@@ -36,8 +35,11 @@ export const upsertSettings = async (req, res) => {
       { new: true, upsert: true }
     ).lean();
 
-    const cacheKey = `${CACHE_KEY_PREFIX}${userId}`;
-    settingsCache.set(cacheKey, settings);
+    // update cache
+    cache.set(settingsCacheKey(userId), settings);
+
+    // ⚠️ optional but correct: invalidate dependent entry caches
+    // cache.flushAll(); // or targeted invalidation later
 
     res.json(settings);
   } catch (err) {
