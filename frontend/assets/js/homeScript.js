@@ -97,9 +97,33 @@ const calendarGrid = document.getElementById("calendarGrid");
 const prevBtn = document.getElementById("prevMonth");
 const nextBtn = document.getElementById("nextMonth");
 
-let currentDate = new Date();
+const ENTRY_API = `${API_BASE_URL}/api/v1/dashboard/month-entries`;
 
-function renderCalendar(date) {
+let currentDate = new Date();
+let entryDates = new Set();
+
+/* ==========================
+   LOAD MONTH ENTRY DATES
+========================== */
+async function loadMonthEntries(date) {
+  const month = `${date.getFullYear()}-${String(
+    date.getMonth() + 1
+  ).padStart(2, "0")}`;
+
+  const res = await authFetch(`${ENTRY_API}?month=${month}`);
+  if (!res.ok) return;
+
+  const { dates } = await res.json();
+  entryDates = new Set(dates);
+  console.log("Loaded entry dates:", entryDates);
+}
+
+/* ==========================
+   RENDER CALENDAR
+========================== */
+async function renderCalendar(date) {
+  await loadMonthEntries(date);
+
   calendarGrid.innerHTML = `
     <p class="text-white text-[13px] font-bold flex h-12 items-center justify-center">S</p>
     <p class="text-white text-[13px] font-bold flex h-12 items-center justify-center">M</p>
@@ -126,28 +150,50 @@ function renderCalendar(date) {
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
-    const isToday =
-      day === today.getDate() &&
-      month === today.getMonth() &&
-      year === today.getFullYear();
+   const selectedDate = `${year}-${String(month + 1).padStart(
+  2,
+  "0"
+)}-${String(day).padStart(2, "0")}`;
 
-    const selectedDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+const isToday =
+  day === today.getDate() &&
+  month === today.getMonth() &&
+  year === today.getFullYear();
 
-    calendarGrid.innerHTML += `
-      <button
-        class="h-12 w-full text-white text-sm font-medium leading-normal date-btn"
-        data-date="${selectedDate}"
-      >
-        <div class="flex size-full items-center justify-center rounded-full ${
-          isToday ? "bg-black" : ""
-        }">
-          ${day}
-        </div>
-      </button>
-    `;
+const hasEntry = entryDates.has(selectedDate);
+
+// tick logic
+let tick = `
+  <span class="absolute bottom-1 right-1 text-yellow-400 text-xs">✓</span>
+`;
+
+if (hasEntry) {
+  tick = `
+    <span class="absolute bottom-1 right-1 text-green-500 text-xs">✓</span>
+  `;
+}
+
+// today override
+const bgClass = isToday ? "bg-black" : "";
+
+calendarGrid.innerHTML += `
+  <button
+    class="relative h-12 w-full text-white text-sm font-medium leading-normal date-btn"
+    data-date="${selectedDate}"
+  >
+    <div class="flex size-full items-center justify-center rounded-full ${bgClass}">
+      ${day}
+      ${tick}
+    </div>
+  </button>
+`;
+
   }
 }
 
+/* ==========================
+   NAVIGATION
+========================== */
 function openAddEntry(date) {
   window.location.href = `addEntry.html?date=${date}`;
 }
@@ -162,14 +208,14 @@ nextBtn.addEventListener("click", () => {
   renderCalendar(currentDate);
 });
 
-renderCalendar(currentDate);
-
 calendarGrid.addEventListener("click", (e) => {
   const btn = e.target.closest(".date-btn");
   if (!btn) return;
-
-  const date = btn.dataset.date;
-  openAddEntry(date);
+  openAddEntry(btn.dataset.date);
 });
 
+renderCalendar(currentDate);
+
 document.addEventListener("DOMContentLoaded", loadDashboard);
+
+// TODO: tick color change based on entry presence
