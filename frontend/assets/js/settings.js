@@ -6,7 +6,6 @@ const milkValueInput = document.getElementById("milkValue");
 const milkUnitSelect = document.getElementById("milkUnit");
 
 const API_URL = `${API_BASE_URL}/api/v1/settings`;
-console.log("authFetch exists:", typeof authFetch); // Debug line
 
 const fetchSettings = async () => {
   const res = await authFetch(`${API_URL}/get`, {
