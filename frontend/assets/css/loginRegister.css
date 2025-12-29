@@ -159,7 +159,7 @@ body {
   width: 100%;
   outline: none;
   border: none;
-  padding: 0 30px;
+  padding: 0 40px 0 30px; /* leave space on the right for the eye icon */
   font-size: 16px;
   font-weight: 500;
   background: #363636;
@@ -178,6 +178,21 @@ body {
   color: #ffffff;
   font-size: 17px;
 }
+
+/* Eye icon to toggle password visibility */
+.form-content .input-box .toggle-password {
+  position: absolute;
+  right: 10px;
+  color: #ffffff;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+}
+
+.form-content .input-box .toggle-password:hover {
+  opacity: 1;
+} 
 
 .forms .form-content .text {
   font-size: 14px;

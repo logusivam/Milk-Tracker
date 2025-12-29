@@ -41,7 +41,7 @@ export async function verifyAuth() {
     // 2️⃣ ONLY refresh if needed
     const refreshed = await refreshAccessToken();
     if (!refreshed) {
-      window.location.replace("loginregister.html");
+      window.location.replace("loginRegister.html");
       return;
     }
 
@@ -52,10 +52,10 @@ export async function verifyAuth() {
     });
 
     if (!res.ok) {
-      window.location.replace("loginregister.html");
+      window.location.replace("loginRegister.html");
     }
   } catch {
-    window.location.replace("loginregister.html");
+    window.location.replace("loginRegister.html");
   }
 }
 
@@ -81,7 +81,7 @@ export async function authFetch(url, options = {}) {
   if (res.status === 401) {
     const refreshed = await refreshAccessToken();
     if (!refreshed) {
-      window.location.replace("loginregister.html");
+      window.location.replace("loginRegister.html");
       return;
     }
 
@@ -101,7 +101,7 @@ export async function logout() {
   } catch (e) {
     // ignore errors
   } finally {
-    window.location.replace("loginregister.html");
+    window.location.replace("loginRegister.html");
   }
 }
 
