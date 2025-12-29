@@ -22,6 +22,10 @@ export const entryCacheKey = (userId, date) =>
 export const monthEntriesCacheKey = (userId, month) =>
   `entries:${userId}:${month}`;
 
+// cache/dashboard.cache.js
+export const dashboardCacheKey = (userId, month) =>
+  `dashboard:${userId}:${month}`;
+
 /* ==========================
    EXPORT CACHE INSTANCE
 ========================== */
