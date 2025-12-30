@@ -52,23 +52,48 @@ export const addDuration = async (req, res) => {
     const userId = req.user.id;
     const { start_date, end_date } = req.body;
 
-    if (!start_date || !end_date) {
-      return res.status(400).json({ message: "Invalid duration" });
+    if (!start_date) {
+      return res.status(400).json({ message: "Start date is required" });
     }
 
-    const settings = await Settings.findOneAndUpdate(
-      { user_id: userId },
-      {
-        $push: {
-          duration: { start_date, end_date }
-        }
-      },
-      { new: true, upsert: true }
-    ).lean();
+    // check if duration with same start_date exists
+    const existing = await Settings.findOne({
+      user_id: userId,
+      "duration.start_date": start_date
+    });
+
+    let settings;
+
+    if (existing) {
+      // update end_date of the matched start_date
+      settings = await Settings.findOneAndUpdate(
+        {
+          user_id: userId,
+          "duration.start_date": start_date
+        },
+        {
+          $set: {
+            "duration.$.end_date": end_date
+          }
+        },
+        { new: true }
+      ).lean();
+    } else {
+      // push new duration
+      settings = await Settings.findOneAndUpdate(
+        { user_id: userId },
+        {
+          $push: {
+            duration: { start_date, end_date }
+          }
+        },
+        { new: true, upsert: true }
+      ).lean();
+    }
 
     cache.set(settingsCacheKey(userId), settings);
     res.json(settings);
-  } catch {
+  } catch (err) {
     res.status(500).json({ message: "Failed to save duration" });
   }
 };
