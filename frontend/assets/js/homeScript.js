@@ -19,18 +19,14 @@ const mlToLitres = (ml) => (ml / 1000).toFixed(3);
 
 // clear existing static HTML rows
 const clearHistory = () => {
-  document
-    .querySelectorAll('[id="purchase-history"]')
-    .forEach((el, index) => {
-      if (index !== 0) el.remove();
-    });
+  document.querySelectorAll(".dynamic-history-row").forEach((el) => el.remove());
 };
 
 
 const renderHistoryItem = ({ date, quantity, price }) => {
   const wrapper = document.createElement("div");
   wrapper.className =
-    "flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-[72px] py-2 justify-between";
+    "dynamic-history-row flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-[72px] py-2 justify-between";
 
   wrapper.innerHTML = `
     <div class="flex flex-col justify-center">
@@ -55,9 +51,13 @@ const renderHistoryItem = ({ date, quantity, price }) => {
   return wrapper;
 };
 
-const loadDashboard = async () => {
+const loadDashboard = async (date = new Date()) => {
   try {
-    const res = await authFetch(API_URL);
+    const month = `${date.getFullYear()}-${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}`;
+
+    const res = await authFetch(`${API_URL}?month=${month}`);
 
     if (!res.ok) throw new Error("Dashboard fetch failed");
 
@@ -70,24 +70,28 @@ const loadDashboard = async () => {
     totalLitresCard.textContent = `${mlToLitres(totalQty)} L`;
     totalCostCard.textContent = `₹ ${totalCost.toFixed(2)}`;
 
-
     // history
     clearHistory();
 
+    // ❌ duration-blocked month → stop here
+    if (!data.history || data.history.length === 0) {
+      return;
+    }
+
     let lastNode = historyTemplate;
 
-data.history
-  .sort((a, b) => new Date(a.date) - new Date(b.date))
-  .forEach((item) => {
-    const node = renderHistoryItem(item);
-    lastNode.after(node);
-    lastNode = node;
-  });
-
+    data.history
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .forEach((item) => {
+        const node = renderHistoryItem(item);
+        lastNode.after(node);
+        lastNode = node;
+      });
   } catch (err) {
     console.error(err);
   }
 };
+
 
 /* ==========================
    CALENDAR LOGIC (UNCHANGED)
@@ -202,11 +206,13 @@ function openAddEntry(date) {
 prevBtn.addEventListener("click", () => {
   currentDate.setMonth(currentDate.getMonth() - 1);
   renderCalendar(currentDate);
+    loadDashboard(currentDate);
 });
 
 nextBtn.addEventListener("click", () => {
   currentDate.setMonth(currentDate.getMonth() + 1);
   renderCalendar(currentDate);
+    loadDashboard(currentDate);
 });
 
 calendarGrid.addEventListener("click", (e) => {
@@ -215,5 +221,5 @@ calendarGrid.addEventListener("click", (e) => {
   openAddEntry(btn.dataset.date);
 });
 
-document.addEventListener("DOMContentLoaded", loadDashboard);
+document.addEventListener("DOMContentLoaded", () => loadDashboard(currentDate));
 renderCalendar(currentDate);
