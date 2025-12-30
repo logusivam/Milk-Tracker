@@ -1,11 +1,7 @@
+import Settings from "../models/settings.model.js";
 import Entry from "../models/entry.model.js";
-import Dashboard from "../models/dashboard.model.js";
-
-function getMonth(dateStr) {
-  // YYYY-MM-DD → YYYY-MM
-  return dateStr.slice(0, 7);
-}
-
+import { rebuildAllDashboardsForUser } from "./dashboard.rebuilder.js";
+ 
 export function startDashboardWorker() {
   const changeStream = Entry.watch([], { fullDocument: "updateLookup" });
 
@@ -18,49 +14,25 @@ export function startDashboardWorker() {
 
       if (!entry) return;
 
-      const { user_id, date, quantity, cost } = entry;
-      const month = getMonth(date);
-
-      // Recalculate safely for the month
-      await rebuildMonthlyDashboard(user_id, month);
+      await rebuildAllDashboardsForUser(entry.user_id);
     } catch (err) {
       console.error("Dashboard worker error:", err);
     }
   });
 }
 
-export async function rebuildMonthlyDashboard(userId, month) {
-  // 1️⃣ get all entries for that month
-  const entries = await Entry.find({
-    user_id: userId,
-    date: { $regex: `^${month}` }
-  }).lean();
+export function startSettingsWorker() {
+  const changeStream = Settings.watch([], { fullDocument: "updateLookup" });
 
-  if (!entries.length) return;
+  changeStream.on("change", async (change) => {
+    try {
+      const settings = change.fullDocument;
+      if (!settings) return;
 
-  // 2️⃣ aggregate totals
-  let totalML = 0;
-  let totalCost = 0;
-
-  const history = entries.map((e) => {
-    totalML += e.quantity;
-    totalCost += e.cost;
-
-    return {
-      date: e.date,
-      quantity: e.quantity,
-      price: e.cost
-    };
+      await rebuildAllDashboardsForUser(settings.user_id);
+    } catch (err) {
+      console.error("Settings worker error:", err);
+    }
   });
-
-  // 3️⃣ upsert dashboard doc
-  await Dashboard.findOneAndUpdate(
-    { user_id: userId, month },
-    {
-      total_quantity: totalML,
-      total_cost: totalCost,
-      history
-    },
-    { upsert: true, new: true }
-  );
 }
+ 

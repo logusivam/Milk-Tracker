@@ -25,19 +25,32 @@ const dashboardSchema = new mongoose.Schema(
       required: true,
       index: true
     },
-    month: {
-      type: String, // YYYY-MM
-      required: true,
-      index: true
+
+    duration_index: {
+      type: Number,
+      required: true
     },
+
+    start_date: {
+      type: String,
+      required: true
+    },
+
+    end_date: {
+      type: String,
+      default: null // open-ended
+    },
+
     total_quantity: {
-      type: Number, // stored as ML
+      type: Number,
       default: 0
     },
+
     total_cost: {
       type: Number,
       default: 0
     },
+
     history: {
       type: [historySchema],
       default: []
@@ -46,7 +59,8 @@ const dashboardSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// guarantee ONE doc per user per month
-dashboardSchema.index({ user_id: 1, month: 1 }, { unique: true });
-
+dashboardSchema.index(
+  { user_id: 1, duration_index: 1 },
+  { unique: true }
+);
 export default mongoose.model("Dashboard", dashboardSchema);
