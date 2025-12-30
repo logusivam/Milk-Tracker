@@ -63,12 +63,12 @@ const loadDashboard = async () => {
 
     const { data } = await res.json();
 
-    // totals
+    // totals cards
     const totalQty = Number(data?.total_quantity || 0);
-const totalCost = Number(data?.total_cost || 0);
+    const totalCost = Number(data?.total_cost || 0);
 
-totalLitresCard.textContent = `${mlToLitres(totalQty)} L`;
-totalCostCard.textContent = `₹ ${totalCost.toFixed(2)}`;
+    totalLitresCard.textContent = `${mlToLitres(totalQty)} L`;
+    totalCostCard.textContent = `₹ ${totalCost.toFixed(2)}`;
 
 
     // history
@@ -215,8 +215,5 @@ calendarGrid.addEventListener("click", (e) => {
   openAddEntry(btn.dataset.date);
 });
 
-renderCalendar(currentDate);
-
 document.addEventListener("DOMContentLoaded", loadDashboard);
-
-// TODO: tick color change based on entry presence
+renderCalendar(currentDate);
