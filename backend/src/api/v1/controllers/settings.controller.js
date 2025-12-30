@@ -46,3 +46,29 @@ export const upsertSettings = async (req, res) => {
     res.status(500).json({ message: "Failed to save settings" });
   }
 };
+
+export const addDuration = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { start_date, end_date } = req.body;
+
+    if (!start_date || !end_date) {
+      return res.status(400).json({ message: "Invalid duration" });
+    }
+
+    const settings = await Settings.findOneAndUpdate(
+      { user_id: userId },
+      {
+        $push: {
+          duration: { start_date, end_date }
+        }
+      },
+      { new: true, upsert: true }
+    ).lean();
+
+    cache.set(settingsCacheKey(userId), settings);
+    res.json(settings);
+  } catch {
+    res.status(500).json({ message: "Failed to save duration" });
+  }
+};
