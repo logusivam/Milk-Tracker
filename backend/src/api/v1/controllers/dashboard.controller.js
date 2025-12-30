@@ -2,6 +2,7 @@
 import Dashboard from "../../../models/dashboard.model.js";
 import cache, { dashboardCacheKey } from "../../../utils/cache.js";
 
+// Get monthly dashboard data cards and history entries for the home screen
 export const getMonthlyDashboard = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -49,6 +50,7 @@ export const getMonthlyDashboard = async (req, res, next) => {
   }
 };
 
+// Get dates with entries for a given month for the calendar view
 export const getMonthEntryDates = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -58,7 +60,7 @@ export const getMonthEntryDates = async (req, res) => {
       return res.status(400).json({ message: "Month required" });
     }
 
-    const cacheKey = dashboardCacheKey(userId, month);
+    const cacheKey = `${dashboardCacheKey(userId, month)}_calendar`;
     const cached = cache.get(cacheKey);
     if (cached) {
       return res.json(cached);

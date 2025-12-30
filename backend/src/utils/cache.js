@@ -1,7 +1,7 @@
 import NodeCache from "node-cache";
 
 const cache = new NodeCache({
-  stdTTL: 3600,       // default TTL: 1 hour
+  stdTTL: 360,       // default TTL: 1 hour  // TODO: need to update to 3600 (in production)
   checkperiod: 120,
   useClones: false   // IMPORTANT: avoid deep clone overhead
 });
