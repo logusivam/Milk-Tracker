@@ -9,6 +9,14 @@ const startDateInput = document.getElementById("startDate");
 const endDateInput = document.getElementById("endDate");
 const saveBtn = document.getElementById("saveSettingsBtn");
 
+// ongoing message for end date
+const ongoingMsg = document.createElement("p");
+ongoingMsg.textContent = "ongoing.......";
+ongoingMsg.className = "text-yellow-400 text-xs mt-1 text-right hidden";
+
+const endDateWrapper = document.getElementById("endDateWrapper");
+endDateWrapper.appendChild(ongoingMsg);
+
 // initial state snapshot
 let initialState = {};
 
@@ -21,24 +29,28 @@ const setInitialState = (data) => {
     startDate: startDateInput.value,
     endDate: endDateInput.value
   };
-};
+}; 
 
-// check if there are changes
-const hasChanges = () => {
-  return (
-    priceInput.value !== initialState.price ||
-    milkValueInput.value !== initialState.milkValue ||
-    milkUnitSelect.value !== initialState.milkUnit ||
-    startDateInput.value !== initialState.startDate ||
-    endDateInput.value !== initialState.endDate
-  );
-};
+// granular change checks
+const settingsChanged = () =>
+  priceInput.value !== initialState.price ||
+  milkValueInput.value !== initialState.milkValue ||
+  milkUnitSelect.value !== initialState.milkUnit;
 
-// enable/disable save button based on changes
+const durationChanged = () =>
+  startDateInput.value !== initialState.startDate ||
+  endDateInput.value !== initialState.endDate;
+ 
+// overall change detection
+const hasChanges = () => settingsChanged() || durationChanged();
+
+// enable/disable save button
 const toggleSaveButton = () => {
-  saveBtn.disabled = !hasChanges();
-  saveBtn.style.cursor = "pointer";
-  saveBtn.style.backgroundColor = "black";
+  const changed = hasChanges();
+  saveBtn.disabled = !changed;
+  saveBtn.style.cursor = changed ? "pointer" : "not-allowed";
+  saveBtn.style.backgroundColor = changed ? "black" : "#888";
+  saveBtn.style.color = changed ? "#ffffff" : "#000000ff";
 };
 
 const API_URL = `${API_BASE_URL}/api/v1/settings`;
@@ -57,16 +69,20 @@ const fetchSettings = async () => {
   // load latest duration
   if (data.duration?.length) {
     const latest = data.duration[data.duration.length - 1];
-    startDateInput.value = latest.start_date;
-    endDateInput.value = latest.end_date;
+    startDateInput.value = latest.start_date || "";
+    endDateInput.value = latest.end_date || "";
+
+    // show ongoing message if end_date is empty
+    if (!latest.end_date) {
+      ongoingMsg.classList.remove("hidden");
+    } else {
+      ongoingMsg.classList.add("hidden");
+    }
   }
 
   // set initial state for change detection for save button
   setInitialState();
-  saveBtn.disabled = true;
-  saveBtn.style.cursor = "not-allowed";
-  saveBtn.style.backgroundColor = "#888";
-  saveBtn.style.color = "#000000ff";
+  toggleSaveButton();
 };
 
 const saveSettings = async () => {
@@ -84,16 +100,23 @@ const saveSettings = async () => {
 };
 
 const saveDuration = async () => {
-  if (!startDateInput.value || !endDateInput.value) return;
+  if (!startDateInput.value) return;
+
+  ongoingMsg.classList.add("hidden");
 
   await authFetch(`${API_URL}/save-duration`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       start_date: startDateInput.value,
-      end_date: endDateInput.value
+      end_date: endDateInput.value || null
     })
   });
+
+  // show ongoing message if end date is empty
+  if (!endDateInput.value) {
+    ongoingMsg.classList.remove("hidden");
+  }
 };
 
 // handle save click
@@ -103,10 +126,16 @@ const handleSaveClick = async () => {
   saveBtn.style.backgroundColor = "#888";
   saveBtn.style.color = "#000000ff";
 
-  await saveSettings();
-  await saveDuration();
+  if (settingsChanged()) {
+    await saveSettings();
+  }
+
+  if (durationChanged()) {
+    await saveDuration();
+  }
 
   setInitialState();
+  toggleSaveButton();
 };
 
 // change detection
