@@ -15,7 +15,7 @@ const historyTemplate = document.querySelector('[id="purchase-history"]');
 
 
 // helper
-const mlToLitres = (ml) => (ml / 1000).toFixed(2);
+const mlToLitres = (ml) => (ml / 1000).toFixed(3);
 
 // clear existing static HTML rows
 const clearHistory = () => {
@@ -67,6 +67,8 @@ const loadDashboard = async () => {
     totalLitresCard.textContent = `${mlToLitres(
       data.total_quantity
     )} L`;
+    console.log(data.total_quantity);
+
 
     totalCostCard.textContent = `₹ ${data.total_cost.toFixed(2)}`;
 
