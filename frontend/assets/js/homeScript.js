@@ -64,13 +64,12 @@ const loadDashboard = async () => {
     const { data } = await res.json();
 
     // totals
-    totalLitresCard.textContent = `${mlToLitres(
-      data.total_quantity
-    )} L`;
-    console.log(data.total_quantity);
+    const totalQty = Number(data?.total_quantity || 0);
+const totalCost = Number(data?.total_cost || 0);
 
+totalLitresCard.textContent = `${mlToLitres(totalQty)} L`;
+totalCostCard.textContent = `₹ ${totalCost.toFixed(2)}`;
 
-    totalCostCard.textContent = `₹ ${data.total_cost.toFixed(2)}`;
 
     // history
     clearHistory();
