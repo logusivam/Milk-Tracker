@@ -63,6 +63,10 @@ async function loadExistingEntry() {
       return;
     }
 
+    if (res.ok) {
+      showToast("Loaded existing entry for this date");
+    }
+
     const entry = await res.json();
 
     qtyInput.value = entry.quantity;
