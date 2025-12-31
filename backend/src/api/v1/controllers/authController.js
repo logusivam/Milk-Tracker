@@ -62,7 +62,7 @@ export const login = async (req, res) => {
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
   });
 
-  console.info("Created refresh token entry for user", String(user._id), "jti:", jti);
+  //console.info("Created refresh token entry for user", String(user._id), "jti:", jti);
 
   const accessToken = signAccessToken({ id: user._id });
   const refreshToken = signRefreshToken({ id: user._id, jti });
@@ -99,7 +99,7 @@ export const refresh = async (req, res) => {
     if (!token) return res.sendStatus(401);
 
     const payload = verifyToken(token);
-    console.info("Incoming refresh jti:", payload.jti);
+    //console.info("Incoming refresh jti:", payload.jti);
 
     const stored = await RefreshToken.findOne({
       tokenId: payload.jti,
@@ -107,7 +107,7 @@ export const refresh = async (req, res) => {
     });
 
     if (!stored) {
-      console.warn("Refresh token not found or revoked:", payload.jti);
+      //console.warn("Refresh token not found or revoked:", payload.jti);
       return res.sendStatus(403);
     }
 
@@ -121,7 +121,7 @@ export const refresh = async (req, res) => {
 
     res.json({ accessToken: newAccessToken });
   } catch (err) {
-    console.error("Refresh error:", err.message);
+    //.error("Refresh error:", err.message);
     res.sendStatus(403);
   }
 };
