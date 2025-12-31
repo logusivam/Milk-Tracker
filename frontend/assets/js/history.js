@@ -21,7 +21,7 @@ function formatDate(dateStr) {
     year: "numeric"
   });
 }
-
+// TODO: daily consumption average
 /* render */
 function renderHistory(doc) {
   totalLitresEl.textContent = formatLitres(doc.overall_quantity);
@@ -55,8 +55,8 @@ async function loadHistory() {
   const res = await authFetch(API_HISTORY);
   if (!res.ok) return;
 
-  const histories = await res.json();
-  if (!histories.length) return;
+  const { data: histories } = await res.json();
+  if (!histories || !histories.length) return;
 
   dropdown.innerHTML = "";
 
