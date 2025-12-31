@@ -23,7 +23,15 @@ function formatDate(dateStr) {
   });
 }
 
-/* render */
+// format for dropdown options to display month names
+function formatDropdownDate(dateStr) {
+  if (!dateStr) return "Present";
+  const [year, month, day] = dateStr.split("-");
+  const date = new Date(year, month - 1, day);
+  return `${year}-${date.toLocaleString("en-US", { month: "short" })}-${day}`;
+}
+
+/* render history */
 function renderHistory(doc) {
   totalLitresEl.textContent = formatLitres(doc.overall_quantity);
   totalCostEl.textContent = `₹ ${doc.overall_cost.toFixed(2)}`;
@@ -53,7 +61,7 @@ function renderHistory(doc) {
   renderDailyConsumptionGraph(doc);
 }
 
-/* load */
+/* load history  and cards data*/
 async function loadHistory() {
   const res = await authFetch(API_HISTORY);
   if (!res.ok) return;
@@ -66,7 +74,9 @@ async function loadHistory() {
   histories.forEach((h, index) => {
     const opt = document.createElement("option");
     opt.value = index;
-    opt.textContent = `${h.start_date} → ${h.end_date || "Present"}`;
+    opt.textContent = `${formatDropdownDate(h.start_date)} → ${formatDropdownDate(
+      h.end_date
+    )}`;
     dropdown.appendChild(opt);
   });
 
@@ -142,4 +152,5 @@ function renderDailyConsumptionGraph(historyDoc) {
   });
 }
 
+// initial load
 loadHistory();
