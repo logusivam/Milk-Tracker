@@ -29,7 +29,9 @@
           </div>
           <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Monthly Summary</h2>
         </div>
-        <select id="durationSelect" class="bg-[#1a1a1a] text-white px-4 py-2 rounded-md w-full"></select>
+        <div class="p-4">
+          <select id="durationSelect" class="bg-[#1a1a1a] text-white px-4 py-2 rounded-md w-full"><!-- js will render --></select>
+        </div>
         <div class="flex flex-wrap gap-4 p-4">
           <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-[#363636]">
             <p class="text-white text-base font-medium leading-normal">Total Litres</p>
@@ -43,21 +45,9 @@
         <div class="flex flex-wrap gap-4 px-4 py-6">
           <div class="flex min-w-72 flex-1 flex-col gap-2">
             <p class="text-white text-base font-medium leading-normal">Daily Consumption</p>
-            <div class="grid min-h-[180px] grid-flow-col gap-6 grid-rows-[1fr_auto] items-end justify-items-center px-3">
-              <div class="border-[#adadad] bg-[#363636] border-t-2 w-full" style="height: 100%;"></div>
-              <p class="text-[#adadad] text-[13px] font-bold leading-normal tracking-[0.015em]">1</p>
-              <div class="border-[#adadad] bg-[#363636] border-t-2 w-full" style="height: 90%;"></div>
-              <p class="text-[#adadad] text-[13px] font-bold leading-normal tracking-[0.015em]">5</p>
-              <div class="border-[#adadad] bg-[#363636] border-t-2 w-full" style="height: 60%;"></div>
-              <p class="text-[#adadad] text-[13px] font-bold leading-normal tracking-[0.015em]">10</p>
-              <div class="border-[#adadad] bg-[#363636] border-t-2 w-full" style="height: 50%;"></div>
-              <p class="text-[#adadad] text-[13px] font-bold leading-normal tracking-[0.015em]">15</p>
-              <div class="border-[#adadad] bg-[#363636] border-t-2 w-full" style="height: 90%;"></div>
-              <p class="text-[#adadad] text-[13px] font-bold leading-normal tracking-[0.015em]">20</p>
-              <div class="border-[#adadad] bg-[#363636] border-t-2 w-full" style="height: 10%;"></div>
-              <p class="text-[#adadad] text-[13px] font-bold leading-normal tracking-[0.015em]">25</p>
-              <div class="border-[#adadad] bg-[#363636] border-t-2 w-full" style="height: 50%;"></div>
-              <p class="text-[#adadad] text-[13px] font-bold leading-normal tracking-[0.015em]">30</p>
+            <div id="dailyConsumptionGraph" class="grid min-h-[180px] grid-flow-col auto-cols-[32px] gap-4
+                     grid-rows-[1fr_auto] items-end justify-items-center
+                     px-3 overflow-x-auto overflow-y-visible">
             </div>
           </div>
         </div>
