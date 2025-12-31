@@ -26,6 +26,10 @@ export const monthEntriesCacheKey = (userId, month) =>
 export const dashboardCacheKey = (userId, month) =>
   `dashboard:${userId}:${month}`;
 
+// ✅ History (all durations for a user)
+export const historyCacheKey = (userId) =>
+  `history:${userId}`;
+
 /* ==========================
    EXPORT CACHE INSTANCE
 ========================== */
