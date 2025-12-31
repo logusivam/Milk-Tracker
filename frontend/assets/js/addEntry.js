@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "../../utils/config.js";
 import { authFetch } from "./auth/auth-guard.js";
+import { showToast } from "./utils/toast.js";
 
 /* ==========================
    DOM ELEMENTS (SAFE)
@@ -95,7 +96,11 @@ unitSelect.addEventListener("change", calculateCost);
 
 saveBtn.addEventListener("click", async () => {
   const qty = parseFloat(qtyInput.value);
-  if (!qty) return;
+  
+  if (!qty) {
+    showToast("Please enter a valid quantity.");
+    return;
+  }
 
   const quantityML =
     unitSelect.value === "litres" ? qty * 1000 : qty;
@@ -110,7 +115,7 @@ saveBtn.addEventListener("click", async () => {
 });
 
 backBtn.addEventListener("click", () => {
-  window.history.back();
+  window.location.href = "index.html";
 });
 
 /* ==========================
