@@ -49,14 +49,29 @@ async function loadSettings() {
 async function loadExistingEntry() {
   if (!date) return;
 
-  const res = await authFetch(`${API_ENTRY}/get?date=${date}`);
-  if (!res || !res.ok) return;
+  try {
+    const res = await authFetch(`${API_ENTRY}/get?date=${date}`);
 
-  const entry = await res.json();
+    // Entry does not exist (valid case)
+    if (res.status === 404) {
+      showToast("No entry found for this date");
+      return;
+    }
 
-  qtyInput.value = entry.quantity;
-  unitSelect.value = "ml";
-  calculateCost();
+    if (!res.ok) {
+      showToast("Failed to load entry");
+      return;
+    }
+
+    const entry = await res.json();
+
+    qtyInput.value = entry.quantity;
+    unitSelect.value = "ml";
+    calculateCost();
+  } catch (err) {
+    //console.error(err);
+    showToast("Network error while loading entry");
+  }
 }
 
 /* ==========================
