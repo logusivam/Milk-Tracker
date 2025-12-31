@@ -43,6 +43,22 @@ async function loadSettings() {
 }
 
 /* ==========================
+   LOAD EXISTING ENTRY (NEW)
+========================== */
+async function loadExistingEntry() {
+  if (!date) return;
+
+  const res = await authFetch(`${API_ENTRY}/get?date=${date}`);
+  if (!res || !res.ok) return;
+
+  const entry = await res.json();
+
+  qtyInput.value = entry.quantity;
+  unitSelect.value = "ml";
+  calculateCost();
+}
+
+/* ==========================
    COST CALCULATION
 ========================== */
 function calculateCost() {
@@ -97,4 +113,10 @@ backBtn.addEventListener("click", () => {
   window.history.back();
 });
 
-loadSettings();
+/* ==========================
+   INIT
+========================== */
+(async () => {
+  await loadSettings();
+  await loadExistingEntry();
+})();
