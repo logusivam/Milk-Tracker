@@ -2,8 +2,16 @@
 import { API_BASE_URL } from "../../utils/config.js";
 import { authFetch } from "./auth/auth-guard.js";
 
+// ==========================
+// DASHBOARD LOGIC API
+// ==========================
 const API_URL = `${API_BASE_URL}/api/v1/dashboard/get-data`;
 
+// variable to store the activedashboard data
+let activeStartDate = null;
+let activeEndDate = null;
+
+// home screen cards
 const totalLitresCard = document.querySelector(
   "#totalLitresCard p:nth-child(2)"
 );
@@ -11,10 +19,11 @@ const totalCostCard = document.querySelector(
   "#totalCostCard p:nth-child(2)"
 );
 
+// template for purchase history items
 const historyTemplate = document.querySelector('[id="purchase-history"]');
 
 
-// helper
+// helper to convert ml to litres
 const mlToLitres = (ml) => (ml / 1000).toFixed(3);
 
 // clear existing static HTML rows
@@ -22,7 +31,7 @@ const clearHistory = () => {
   document.querySelectorAll(".dynamic-history-row").forEach((el) => el.remove());
 };
 
-
+// render the history items
 const renderHistoryItem = ({ date, quantity, price }) => {
   const wrapper = document.createElement("div");
   wrapper.className =
@@ -62,6 +71,9 @@ const loadDashboard = async (date = new Date()) => {
     if (!res.ok) throw new Error("Dashboard fetch failed");
 
     const { data } = await res.json();
+    activeStartDate = data.start_date || null;
+activeEndDate = data.end_date || null;
+
 
     // totals cards
     const totalQty = Number(data?.total_quantity || 0);
@@ -177,6 +189,23 @@ if (hasEntry) {
   `;
 }
 
+let dots = "";
+
+// duration start → green dot
+if (selectedDate === activeStartDate) {
+  dots += `
+    <span class="absolute top-1 left-1 h-2 w-2 rounded-full bg-green-500"></span>
+  `;
+}
+
+// duration end → red dot
+if (activeEndDate && selectedDate === activeEndDate) {
+  dots += `
+    <span class="absolute top-1 left-1 h-2 w-2 rounded-full bg-red-500"></span>
+  `;
+}
+
+
 // today override
 const bgClass = isToday ? "bg-black" : "";
 
@@ -188,6 +217,7 @@ calendarGrid.innerHTML += `
     <div class="flex size-full items-center justify-center rounded-full ${bgClass}">
       ${day}
       ${tick}
+      ${dots}
     </div>
   </button>
 `;
