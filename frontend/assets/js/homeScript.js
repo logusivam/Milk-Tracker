@@ -88,7 +88,7 @@ const loadDashboard = async (date = new Date()) => {
         lastNode = node;
       });
   } catch (err) {
-    console.error(err);
+    //console.error(err);
   }
 };
 
@@ -119,8 +119,7 @@ async function loadMonthEntries(date) {
   if (!res.ok) return;
 
   const { dates } = await res.json();
-  entryDates = new Set(dates);
-  console.log("Loaded entry dates:", entryDates);
+  entryDates = new Set(dates); // store dates with entries
 }
 
 /* ==========================
