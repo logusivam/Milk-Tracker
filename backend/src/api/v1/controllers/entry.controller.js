@@ -31,13 +31,16 @@ export const saveEntry = async (req, res) => {
     // 2️⃣ calculate cost
     const cost = (quantity_ml / 1000) * settings.price_per_litre;
 
-    // 3️⃣ save entry
-    const entry = await Entry.create({
-      user_id: userId,
-      date,
-      quantity: quantity_ml,
-      cost
-    });
+    // 3️⃣ UPSERT entry (update if exists, else create)
+    const entry = await Entry.findOneAndUpdate(
+      { user_id: userId, date },
+      {
+        quantity: quantity_ml,
+        cost
+      },
+      { upsert: true, new: true }
+    );
+
 
     // 4️⃣ cache entry
     cache.set(entryCacheKey(userId, date), entry);
