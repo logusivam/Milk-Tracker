@@ -1,6 +1,7 @@
 import Settings from "../models/settings.model.js";
 import Entry from "../models/entry.model.js";
 import { rebuildAllDashboardsForUser } from "./dashboard.rebuilder.js";
+import { rebuildAllHistoryForUser } from "./history.rebuilder.js";
  
 export function startDashboardWorker() {
   const changeStream = Entry.watch([], { fullDocument: "updateLookup" });
@@ -15,6 +16,7 @@ export function startDashboardWorker() {
       if (!entry) return;
 
       await rebuildAllDashboardsForUser(entry.user_id);
+      await rebuildAllHistoryForUser(entry.user_id);
     } catch (err) {
       console.error("Dashboard worker error:", err);
     }
@@ -30,6 +32,7 @@ export function startSettingsWorker() {
       if (!settings) return;
 
       await rebuildAllDashboardsForUser(settings.user_id);
+      await rebuildAllHistoryForUser(settings.user_id);
     } catch (err) {
       console.error("Settings worker error:", err);
     }
