@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "../../utils/config.js";
 import { authFetch } from "./auth/auth-guard.js";
+import { showToast } from "./utils/toast.js";
 
 // DOM elements
 const priceInput = document.getElementById("priceInput");
@@ -121,21 +122,34 @@ const saveDuration = async () => {
 
 // handle save click
 const handleSaveClick = async () => {
+
+  // Nothing changed → no save
+    if (!settingsChanged() && !durationChanged()) {
+      showToast("No changes to save");
+      return;
+    }
   saveBtn.disabled = true;
   saveBtn.style.cursor = "not-allowed";
   saveBtn.style.backgroundColor = "#888";
   saveBtn.style.color = "#000000ff";
 
-  if (settingsChanged()) {
-    await saveSettings();
-  }
+  try {
+    if (settingsChanged()) {
+      await saveSettings();
+    }
 
-  if (durationChanged()) {
-    await saveDuration();
-  }
+    if (durationChanged()) {
+      await saveDuration();
+    }
 
-  setInitialState();
-  toggleSaveButton();
+    showToast("Settings saved successfully");
+  } catch (err) {
+    console.error(err);
+    showToast("Failed to save changes");
+  } finally {
+    setInitialState();
+    toggleSaveButton();
+  }
 };
 
 // change detection
@@ -153,6 +167,16 @@ const handleSaveClick = async () => {
 // button click
 saveBtn.addEventListener("click", handleSaveClick);
 
-// existing autosave listeners remain untouched 
+// Back button navigation
+const backBtn = document.getElementById("backBtn");
 
+backBtn.style.cursor = "pointer";
+
+backBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  window.location.href = "index.html";
+});
+
+
+// initial fetch
 fetchSettings();
