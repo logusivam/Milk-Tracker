@@ -9,6 +9,18 @@ const totalLitresEl = document.getElementById("totalLitres");
 const totalCostEl = document.getElementById("totalCost");
 const dailyList = document.getElementById("dailyBreakdown");
 const graphEl = document.getElementById("dailyConsumptionGraph");
+const placeholderEl = document.getElementById("historyPlaceholder");
+const backBtn = document.getElementById("backBtn");
+
+// placeholder display control
+function showPlaceholder() {
+  placeholderEl.style.display = "block";
+}
+
+function hidePlaceholder() {
+  placeholderEl.style.display = "none";
+}
+
 
 /* utils */
 function formatLitres(ml) {
@@ -69,7 +81,7 @@ async function loadHistory() {
   const { data: histories } = await res.json();
   if (!histories || !histories.length) return;
 
-  dropdown.innerHTML = "";
+  dropdown.innerHTML = `<option value="" selected disabled>Select Duration</option>`;
 
   histories.forEach((h, index) => {
     const opt = document.createElement("option");
@@ -79,10 +91,18 @@ async function loadHistory() {
     )}`;
     dropdown.appendChild(opt);
   });
+  
+  // show placeholder initially
+    showPlaceholder();
 
-  renderHistory(histories[0]);
+  //renderHistory(histories[0]);
 
   dropdown.addEventListener("change", (e) => {
+    if (e.target.value === "") {
+      showPlaceholder();
+      return;
+    }
+    hidePlaceholder();
     renderHistory(histories[e.target.value]);
   });
 }
@@ -151,6 +171,13 @@ function renderDailyConsumptionGraph(historyDoc) {
     graphEl.appendChild(label);
   });
 }
+
+// back button style and event
+backBtn.style.cursor = "pointer";
+
+backBtn.addEventListener("click", () => {
+  window.location.href = "index.html";
+});
 
 // initial load
 loadHistory();
