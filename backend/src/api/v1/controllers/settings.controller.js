@@ -2,6 +2,7 @@
 import Settings from "../../../models/settings.model.js";
 import cache, { settingsCacheKey } from "../../../utils/cache.js";
 
+// GET settings
 export const getSettings = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -9,7 +10,7 @@ export const getSettings = async (req, res) => {
 
     const cached = cache.get(cacheKey);
     if (cached) {
-      return res.json(cached);
+      return res.json({ source: "cache", data: cached });
     }
 
     const settings = await Settings.findOne({ user_id: userId }).lean();
@@ -18,12 +19,13 @@ export const getSettings = async (req, res) => {
     }
 
     cache.set(cacheKey, settings);
-    res.json(settings);
+    res.json({ source: "db", data: settings });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch settings" });
   }
 };
 
+// UPSERT settings
 export const upsertSettings = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -47,6 +49,7 @@ export const upsertSettings = async (req, res) => {
   }
 };
 
+// ADD duration start and end dates
 export const addDuration = async (req, res) => {
   try {
     const userId = req.user.id;

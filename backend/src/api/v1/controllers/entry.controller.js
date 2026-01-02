@@ -64,7 +64,7 @@ export const getEntryByDate = async (req, res) => {
     if (!entry) return res.sendStatus(404);
 
     cache.set(cacheKey, entry);
-    res.json({ source: "cache", data: entry });
+    res.json({ source: "db", data: entry });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch entry" });
   }
