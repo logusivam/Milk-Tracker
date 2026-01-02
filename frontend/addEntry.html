@@ -12,6 +12,20 @@
     <title>Add Entry</title>
     <link rel="icon" type="image/x-icon" href="./assets/images/icon-v2.png" />
 
+    <!-- To ignore the CDN tailwind warn -->
+    <script>
+      const originalWarn = console.warn;
+      console.warn = function (...args) {
+        if (
+          typeof args[0] === "string" &&
+          args[0].includes("cdn.tailwindcss.com")
+        ) {
+          return;
+        }
+        originalWarn.apply(console, args);
+      };
+    </script>
+    
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   </head>
   <body>
