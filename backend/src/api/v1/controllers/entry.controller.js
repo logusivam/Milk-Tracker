@@ -58,13 +58,13 @@ export const getEntryByDate = async (req, res) => {
 
     const cacheKey = entryCacheKey(userId, date);
     const cached = cache.get(cacheKey);
-    if (cached) return res.json(cached);
+    if (cached) return res.json({ source: "cache", data: cached });
 
     const entry = await Entry.findOne({ user_id: userId, date }).lean();
     if (!entry) return res.sendStatus(404);
 
     cache.set(cacheKey, entry);
-    res.json(entry);
+    res.json({ source: "cache", data: entry });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch entry" });
   }
