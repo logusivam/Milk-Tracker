@@ -63,7 +63,7 @@ const fetchSettings = async () => {
 
   if (!res || !res.ok) return;
 
-  const data = await res.json();
+  const { data: data } = await res.json();
   priceInput.value = `Rs. ${data.price_per_litre}`;
   milkValueInput.value = data.default_milk_value;
   

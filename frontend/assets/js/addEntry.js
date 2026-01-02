@@ -32,7 +32,7 @@ async function loadSettings() {
   const res = await authFetch(`${API_SETTINGS}/get`);
   if (!res || !res.ok) return;
 
-  const data = await res.json();
+  const { data: data } = await res.json();
   pricePerLitre = data.price_per_litre;
   defaultMilkML = data.default_milk_value;
 
@@ -67,7 +67,7 @@ async function loadExistingEntry() {
       showToast("Loaded existing entry for this date");
     }
 
-    const entry = await res.json();
+    const {data: entry} = await res.json();
 
     qtyInput.value = entry.quantity;
     unitSelect.value = "ml";
