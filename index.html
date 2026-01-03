@@ -1,14 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0; URL=./frontend/loginRegister.html" />
-    <title>Loading...</title>
-    <script>
-      // Extra fallback (in case meta refresh is blocked)
-      window.location.replace("./frontend/loginRegister.html");
-    </script>
-  </head>
-  <body>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Milk Tracker – Track Daily Milk Consumption & Cost</title>
+
+  <meta
+    name="description"
+    content="Milk Tracker helps households track daily milk consumption, costs, and history with a simple dashboard."
+  />
+
+  <meta
+    name="keywords"
+    content="milk consumption tracker, daily milk tracking, milk expense tracker, household milk tracker"
+  />
+
+  <meta name="author" content="Milk Tracker" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Milk Tracker – Daily Milk Consumption Tracking" />
+  <meta
+    property="og:description"
+    content="Track daily milk usage, expenses, and history effortlessly."
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/frontend/assets/images/icon-v2.png" />
+
+  <link rel="icon" href="./frontend/assets/images/icon-v2.png" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-black text-white font-sans">
+
+  <!-- HERO -->
+  <section class="min-h-screen flex items-center justify-center px-6">
+    <div class="max-w-3xl text-center space-y-6">
+      <h1 class="text-4xl md:text-5xl font-bold">
+        Track Your Daily Milk Consumption
+      </h1>
+
+      <p class="text-gray-400 text-lg">
+        Milk Tracker helps households monitor daily milk usage, expenses,
+        and history with a simple and secure dashboard.
+      </p>
+
+      <div class="flex justify-center gap-4">
+        <a
+          href="./frontend/loginRegister.html"
+          class="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200"
+        >
+          Login
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="py-20 bg-[#111] px-6">
+    <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-8">
+      <div class="p-6 bg-[#1a1a1a] rounded-xl">
+        <h3 class="font-semibold text-lg">Daily Tracking</h3>
+        <p class="text-gray-400 mt-2">
+          Record milk consumption per day in litres or millilitres.
+        </p>
+      </div>
+
+      <div class="p-6 bg-[#1a1a1a] rounded-xl">
+        <h3 class="font-semibold text-lg">Cost Calculation</h3>
+        <p class="text-gray-400 mt-2">
+          Automatic cost calculation based on your milk price.
+        </p>
+      </div>
+
+      <div class="p-6 bg-[#1a1a1a] rounded-xl">
+        <h3 class="font-semibold text-lg">History & Dashboard</h3>
+        <p class="text-gray-400 mt-2">
+          View monthly summaries and daily history easily.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-6 text-center text-gray-500 text-sm">
+    © 2026 Milk Tracker
+  </footer>
+
+</body>
 </html>
