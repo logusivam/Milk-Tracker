@@ -40,4 +40,9 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/api", apiRoutes);
 
+// health check
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "OK", Date: new Date().toISOString(), message: "Server is healthy" });
+});
+
 export default app;
