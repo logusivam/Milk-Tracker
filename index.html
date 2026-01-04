@@ -66,7 +66,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-<style>
+    <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
         
         :root {
@@ -78,11 +78,12 @@
             background-color: #030303;
             color: #ffffff;
             overflow-x: hidden;
+            width: 100%;
         }
 
         .reveal { 
             opacity: 0; 
-            transform: translateY(40px) scale(0.98);
+            transform: translateY(30px) scale(0.98);
         }
 
         .glass {
@@ -98,7 +99,7 @@
         }
 
         .header-glass {
-            background: rgba(3, 3, 3, 0.4);
+            background: rgba(3, 3, 3, 0.6);
             backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
@@ -115,10 +116,10 @@
         .grid-bg {
             position: fixed;
             inset: 0;
-            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), 
-                              linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            mask-image: radial-gradient(circle at center, black, transparent 80%);
+            background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(circle at center, black, transparent 85%);
             z-index: -2;
             pointer-events: none;
         }
@@ -130,16 +131,8 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            background: radial-gradient(800px circle at var(--x) var(--y), rgba(255,255,255,0.06), transparent 40%);
+            background: radial-gradient(600px circle at var(--x) var(--y), rgba(255,255,255,0.05), transparent 40%);
             z-index: 1;
-        }
-
-        .btn-container {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            align-items: center;
-            perspective: 1000px;
         }
 
         .magnetic-btn {
@@ -151,8 +144,8 @@
 
         #milk-container {
             position: relative;
-            width: 120px;
-            height: 160px;
+            width: 100px;
+            height: 140px;
             border: 3px solid rgba(255,255,255,0.1);
             border-top: none;
             border-bottom-left-radius: 20px;
@@ -163,9 +156,11 @@
             transition: transform 0.3s ease;
         }
 
-        #milk-container:hover {
-            transform: scale(1.05);
-            border-color: rgba(255,255,255,0.3);
+        @media (min-width: 768px) {
+            #milk-container {
+                width: 120px;
+                height: 160px;
+            }
         }
 
         .milk-level {
@@ -178,7 +173,6 @@
             transition: height 3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Surface Ripple - Only visible when milk is present */
         .milk-level::after {
             content: "";
             position: absolute;
@@ -193,13 +187,8 @@
             transition: opacity 0.5s;
         }
 
-        #milk-container.is-active .milk-level::after {
-            opacity: 1;
-        }
-        
-        #milk-container.is-active .milk-level {
-            box-shadow: 0 -5px 15px rgba(255,255,255,0.3);
-        }
+        #milk-container.is-active .milk-level::after { opacity: 1; }
+        #milk-container.is-active .milk-level { box-shadow: 0 -5px 15px rgba(255,255,255,0.3); }
 
         @keyframes ripple {
             0%, 100% { transform: scaleY(1); }
@@ -211,11 +200,11 @@
             top: -200px;
             left: 50%;
             transform: translateX(-50%);
-            width: 10px;
+            width: 8px;
             height: 200px;
             background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 30%, rgba(255,255,255,1) 100%);
             opacity: 0;
-            border-radius: 5px;
+            border-radius: 4px;
             filter: blur(1px);
         }
 
@@ -229,24 +218,24 @@
 
         .metric-badge {
             opacity: 0;
-            transform: translateX(-20px);
+            transform: translateY(10px);
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .metric-badge.active {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateY(0);
         }
 
         .float-anim { animation: float 8s ease-in-out infinite; }
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(3deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
         }
 
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #030303; }
-        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
 
@@ -255,138 +244,143 @@
     <div class="grid-bg"></div>
     <div id="spotlight"></div>
 
-    <nav class="fixed top-0 w-full z-50 px-8 py-6 flex justify-between items-center transition-all duration-500 header-glass" id="navbar">
-        <div class="flex items-center gap-3 group cursor-pointer">
-            <div class="p-2.5 glass rounded-xl group-hover:scale-110 transition-transform duration-500">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21C7 21 4 21 4 18V6C4 6 4 3 7 3H17C20 3 20 6 20 6V18C20 18 20 21 17 21H7Z"/><path d="M4 8H20"/></svg>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 px-4 md:px-12 py-4 md:py-6 flex justify-between items-center transition-all duration-500 header-glass">
+        <div class="flex items-center gap-2 md:gap-3 group cursor-pointer">
+            <div class="p-2 glass rounded-lg md:rounded-xl group-hover:scale-110 transition-transform duration-500">
+                <svg width="20" height="20" class="md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 21C7 21 4 21 4 18V6C4 6 4 3 7 3H17C20 3 20 6 20 6V18C20 18 20 21 17 21H7Z"/><path d="M4 8H20"/>
+                </svg>
             </div>
-            <span class="font-bold tracking-tight text-xl uppercase italic">MilkTracker</span>
+            <span class="font-bold tracking-tight text-sm md:text-xl uppercase italic">MilkTracker</span>
         </div>
-        <div class="flex items-center gap-8">
-            <a href="#features" class="hidden md:block text-sm font-medium text-gray-400 hover:text-white transition-colors uppercase tracking-widest">Features</a>
-            <a href="./frontend/loginRegister.html" class="glass px-8 py-3 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all">
+        <div class="flex items-center gap-4 md:gap-8">
+            <a href="#features" class="hidden sm:block text-[10px] md:text-xs font-medium text-gray-400 hover:text-white transition-colors uppercase tracking-widest">Features</a>
+            <a href="./frontend/loginRegister.html" class="glass px-5 md:px-8 py-2 md:py-3 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all">
                 Login
             </a>
         </div>
     </nav>
 
-    <section id="hero" class="relative min-h-screen flex flex-col items-center justify-center px-6 pt-24 text-center overflow-hidden">
-        <div class="max-w-5xl space-y-10 z-10">
-            <div class="hero-reveal inline-flex items-center gap-3 glass px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-white/60 mb-4 reveal">
+    <!-- Hero Section -->
+    <section id="hero" class="relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 text-center overflow-hidden">
+        <div class="max-w-6xl w-full space-y-6 md:space-y-10 z-10">
+            <div class="hero-reveal inline-flex items-center gap-2 md:gap-3 glass px-4 py-1.5 rounded-full text-[8px] md:text-[10px] font-bold uppercase tracking-[0.2em] text-white/60 mb-2 reveal">
                 <span class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
                 Digital Dairy Intelligence
             </div>
             
-            <h1 class="hero-reveal text-7xl md:text-[9rem] font-extrabold tracking-tighter gradient-text leading-[0.9] reveal">
-                Master your <br/>consumption.
+            <h1 class="hero-reveal text-5xl sm:text-7xl md:text-[8rem] lg:text-[10rem] font-extrabold tracking-tighter gradient-text leading-[0.95] reveal">
+                Master your <br class="hidden sm:block"/>consumption.
             </h1>
 
-            <p class="hero-reveal text-white/40 text-lg md:text-2xl max-w-2xl mx-auto font-light leading-relaxed reveal">
-                Experience a refined digital ecosystem designed to track, analyze, and optimize your supply.
+            <p class="hero-reveal text-white/40 text-sm md:text-xl lg:text-2xl max-w-2xl mx-auto font-light leading-relaxed reveal">
+                A refined digital ecosystem designed to track, analyze, and optimize your daily supply.
             </p>
 
-            <div class="hero-reveal btn-container pt-8 reveal">
+            <div class="hero-reveal flex flex-col sm:flex-row gap-4 justify-center items-center pt-4 md:pt-8 reveal">
                 <a href="./frontend/loginRegister.html" 
-                   class="magnetic-btn bg-white text-black px-12 py-5 rounded-2xl font-black text-lg hover:scale-105 transition-all shadow-2xl block">
+                   class="magnetic-btn bg-white text-black w-full sm:w-auto px-10 md:px-14 py-4 md:py-5 rounded-xl md:rounded-2xl font-black text-sm md:text-lg hover:scale-105 transition-all shadow-2xl">
                     GET STARTED
                 </a>
-                <button class="magnetic-btn glass text-white px-12 py-5 rounded-2xl font-bold text-lg hover:bg-white/10 transition-all block border border-white/10">
+                <button class="magnetic-btn glass text-white w-full sm:w-auto px-10 md:px-14 py-4 md:py-5 rounded-xl md:rounded-2xl font-bold text-sm md:text-lg hover:bg-white/10 transition-all border border-white/10">
                     LIVE DEMO
                 </button>
             </div>
 
-            <!-- Interactive Milk Drop & Glass with Metrics -->
-            <div class="hero-reveal flex flex-row items-center justify-center gap-8 pt-12 reveal">
-                <div class="flex flex-col items-center">
+            <!-- Interaction Area -->
+            <div class="hero-reveal flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 pt-12 md:pt-16 reveal">
+                <div class="flex flex-col items-center order-2 md:order-1">
                     <div id="milk-container" class="float-anim" title="Click for a Milk Shower">
                         <div class="milk-stream" id="stream"></div>
                         <div class="milk-level" id="level"></div>
                     </div>
-                    <p class="text-[10px] tracking-[0.3em] uppercase text-white/30 animate-pulse mt-2">Tap for Freshness</p>
+                    <p class="text-[8px] md:text-[10px] tracking-[0.3em] uppercase text-white/30 animate-pulse mt-4">Tap to Track</p>
                 </div>
 
-                <div id="metric-sidebar" class="text-left space-y-4 metric-badge">
-                    <div class="glass p-4 rounded-2xl border-l-4 border-white">
-                        <p class="text-[10px] uppercase tracking-widest text-white/40 mb-1">Live Volume</p>
-                        <p class="text-2xl font-bold tracking-tighter"><span id="volume-val">0</span>ml</p>
+                <div id="metric-sidebar" class="flex flex-row md:flex-col gap-3 md:gap-4 metric-badge order-1 md:order-2">
+                    <div class="glass p-4 md:p-6 rounded-xl md:rounded-2xl border-l-2 md:border-l-4 border-white min-w-[120px] md:min-w-[180px] text-left">
+                        <p class="text-[8px] md:text-[10px] uppercase tracking-widest text-white/40 mb-1">Live Volume</p>
+                        <p class="text-lg md:text-2xl font-bold tracking-tighter"><span id="volume-val">0</span>ml</p>
                     </div>
-                    <div class="glass p-4 rounded-2xl border-l-4 border-white/20">
-                        <p class="text-[10px] uppercase tracking-widest text-white/40 mb-1">Live Cost</p>
-                        <p class="text-xl font-bold tracking-tight">₹<span id="cost-val">0.00</span></p>
+                    <div class="glass p-4 md:p-6 rounded-xl md:rounded-2xl border-l-2 md:border-l-4 border-white/20 min-w-[120px] md:min-w-[180px] text-left">
+                        <p class="text-[8px] md:text-[10px] uppercase tracking-widest text-white/40 mb-1">Live Cost</p>
+                        <p class="text-base md:text-xl font-bold tracking-tight">₹<span id="cost-val">0.00</span></p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FEATURES SECTION -->
-    <section id="features" class="py-48 relative">
-        <div class="max-w-7xl mx-auto px-8">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-32 gap-12 reveal">
+    <!-- Features Section -->
+    <section id="features" class="py-24 md:py-48 relative">
+        <div class="max-w-7xl mx-auto px-6 md:px-8">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-16 md:mb-32 gap-8 reveal">
                 <div class="max-w-2xl text-left">
-                    <h2 class="text-5xl md:text-7xl font-bold mb-8 tracking-tighter leading-none">Designed for <br/>the detail-oriented.</h2>
-                    <p class="text-white/40 text-xl font-light">Every interaction is polished. Every byte is purposeful.</p>
+                    <h2 class="text-4xl md:text-7xl font-bold mb-4 md:mb-8 tracking-tighter leading-tight md:leading-none">Designed for <br/>the detail-oriented.</h2>
+                    <p class="text-white/40 text-base md:text-xl font-light">Every interaction is polished. Every byte is purposeful.</p>
                 </div>
                 <div class="h-[1px] flex-grow bg-white/10 mb-6 hidden lg:block"></div>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-10">
-                <div class="feature-card glass p-12 rounded-[3rem] group reveal">
-                    <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-10 group-hover:bg-white group-hover:text-black transition-all duration-500 text-2xl font-bold">
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+                <div class="feature-card glass p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] group reveal">
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white/5 rounded-xl md:rounded-2xl flex items-center justify-center mb-6 md:min-h-[64px] group-hover:bg-white group-hover:text-black transition-all duration-500 text-xl md:text-2xl font-bold">
                         ₹
                     </div>
-                    <h3 class="text-3xl font-bold mb-6 tracking-tight">Precision Logs</h3>
-                    <p class="text-white/40 font-light leading-relaxed text-lg">Detailed timestamps and volume tracking with milliliter precision.</p>
+                    <h3 class="text-2xl md:text-3xl font-bold mb-4 md:mb-6 tracking-tight">Precision Logs</h3>
+                    <p class="text-white/40 font-light leading-relaxed text-sm md:text-lg">Detailed timestamps and volume tracking with milliliter precision.</p>
                 </div>
 
-                <div class="feature-card glass p-12 rounded-[3rem] group reveal">
-                    <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-10 group-hover:bg-white group-hover:text-black transition-all duration-500">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15h0M12 15h0M17 15h0"/></svg>
+                <div class="feature-card glass p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] group reveal">
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white/5 rounded-xl md:rounded-2xl flex items-center justify-center mb-6 md:min-h-[64px] group-hover:bg-white group-hover:text-black transition-all duration-500">
+                        <svg width="24" height="24" class="md:w-8 md:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15h0M12 15h0M17 15h0"/></svg>
                     </div>
-                    <h3 class="text-3xl font-bold mb-6 tracking-tight">Cost Velocity</h3>
-                    <p class="text-white/40 font-light leading-relaxed text-lg">Understand spending trends with real-time price adjustment engines.</p>
+                    <h3 class="text-2xl md:text-3xl font-bold mb-4 md:mb-6 tracking-tight">Cost Velocity</h3>
+                    <p class="text-white/40 font-light leading-relaxed text-sm md:text-lg">Understand spending trends with real-time price adjustment engines.</p>
                 </div>
 
-                <div class="feature-card glass p-12 rounded-[3rem] group reveal">
-                    <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-10 group-hover:bg-white group-hover:text-black transition-all duration-500">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                <div class="feature-card glass p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] group sm:col-span-2 lg:col-span-1 reveal">
+                    <div class="w-12 h-12 md:w-16 md:h-16 bg-white/5 rounded-xl md:rounded-2xl flex items-center justify-center mb-6 md:min-h-[64px] group-hover:bg-white group-hover:text-black transition-all duration-500">
+                        <svg width="24" height="24" class="md:w-8 md:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
                     </div>
-                    <h3 class="text-3xl font-bold mb-6 tracking-tight">Deep Metrics</h3>
-                    <p class="text-white/40 font-light leading-relaxed text-lg">Beautifully rendered vector charts that expose consumption patterns.</p>
+                    <h3 class="text-2xl md:text-3xl font-bold mb-4 md:mb-6 tracking-tight">Deep Metrics</h3>
+                    <p class="text-white/40 font-light leading-relaxed text-sm md:text-lg">Beautifully rendered vector charts that expose consumption patterns.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="py-24 border-t border-white/5">
-        <div class="max-w-7xl mx-auto px-8 flex justify-between items-center">
-            <span class="font-bold tracking-widest uppercase">MilkTracker</span>
-            <p class="text-white/10 text-[10px] tracking-[0.4em] uppercase">© 2026 MILK TRACKER / ALL RIGHTS RESERVED</p>
+    <footer class="py-12 md:py-24 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6 md:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <span class="font-bold tracking-widest uppercase text-xs md:text-base">MilkTracker</span>
+            <p class="text-white/10 text-[8px] md:text-[10px] tracking-[0.2em] md:tracking-[0.4em] uppercase text-center">© 2026 MILK TRACKER / ALL RIGHTS RESERVED</p>
         </div>
     </footer>
 
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // Spotlight
+        // Responsive Spotlight
         window.addEventListener('mousemove', e => {
             gsap.to('#spotlight', { '--x': `${e.clientX}px`, '--y': `${e.clientY}px`, duration: 0.1 });
         });
 
-        // Fixed Magnetic Buttons
-        document.querySelectorAll('.magnetic-btn').forEach(btn => {
-            btn.addEventListener('mousemove', e => {
-                const rect = btn.getBoundingClientRect();
-                const x = (e.clientX - rect.left - rect.width/2) * 0.4;
-                const y = (e.clientY - rect.top - rect.height/2) * 0.4;
-                gsap.to(btn, { x, y, duration: 0.3, zIndex: 50 });
+        // Magnetic effect only for non-touch devices
+        if (window.matchMedia("(pointer: fine)").matches) {
+            document.querySelectorAll('.magnetic-btn').forEach(btn => {
+                btn.addEventListener('mousemove', e => {
+                    const rect = btn.getBoundingClientRect();
+                    const x = (e.clientX - rect.left - rect.width/2) * 0.3;
+                    const y = (e.clientY - rect.top - rect.height/2) * 0.3;
+                    gsap.to(btn, { x, y, duration: 0.3 });
+                });
+                btn.addEventListener('mouseleave', () => {
+                    gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
+                });
             });
-            btn.addEventListener('mouseleave', () => {
-                gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)", zIndex: 10 });
-            });
-        });
+        }
 
-        // Milk Shower Logic
         const milkContainer = document.getElementById('milk-container');
         const level = document.getElementById('level');
         const stream = document.getElementById('stream');
@@ -400,25 +394,25 @@
         function createSplashParticle() {
             const particle = document.createElement('div');
             particle.className = 'milk-particle';
-            const size = Math.random() * 6 + 2;
+            const size = Math.random() * 4 + 2;
             particle.style.width = size + 'px';
             particle.style.height = size + 'px';
             
             const rect = milkContainer.getBoundingClientRect();
             particle.style.left = (rect.width / 2) + 'px';
-            particle.style.bottom = '10px';
+            particle.style.bottom = '5px';
             
             milkContainer.appendChild(particle);
 
-            const angle = (Math.random() - 0.5) * 1.5;
-            const distance = Math.random() * 40 + 20;
+            const angle = (Math.random() - 0.5) * 2;
+            const distance = Math.random() * 30 + 10;
 
             gsap.to(particle, {
                 x: Math.sin(angle) * distance,
-                y: -Math.random() * 50 - 20,
+                y: -Math.random() * 40 - 10,
                 opacity: 0,
                 scale: 0.5,
-                duration: Math.random() * 0.5 + 0.3,
+                duration: 0.5,
                 ease: "power1.out",
                 onComplete: () => particle.remove()
             });
@@ -431,7 +425,6 @@
             metricSidebar.classList.add('active');
             milkContainer.classList.add('is-active');
 
-            // Start Stream
             gsap.to(stream, { 
                 top: "0px", 
                 opacity: 1, 
@@ -440,14 +433,13 @@
                 ease: "power2.in" 
             });
 
-            // Fill Glass
             setTimeout(() => {
-                level.style.height = "90%";
+                level.style.height = "85%";
                 
                 let count = { val: 0 };
                 gsap.to(count, {
                     val: 250,
-                    duration: 3,
+                    duration: 2.5,
                     onUpdate: () => {
                         const currentVol = Math.floor(count.val);
                         volumeVal.innerText = currentVol;
@@ -456,18 +448,17 @@
                 });
 
                 const splashInterval = setInterval(() => {
-                    if(level.style.height === "0%") {
+                    if(!isFilling) {
                         clearInterval(splashInterval);
                         return;
                     }
-                    for(let i=0; i<3; i++) createSplashParticle();
-                }, 100);
+                    createSplashParticle();
+                }, 80);
 
                 setTimeout(() => clearInterval(splashInterval), 2500);
 
             }, 400);
 
-            // Finish Stream
             setTimeout(() => {
                 gsap.to(stream, { opacity: 0, top: "-200px", duration: 0.5 });
                 
@@ -476,14 +467,14 @@
                     metricSidebar.classList.remove('active');
                     milkContainer.classList.remove('is-active');
                     isFilling = false;
-                }, 4000);
-            }, 3000);
+                }, 3500);
+            }, 2500);
         });
 
         function startAnimations() {
             gsap.to(".reveal", {
                 opacity: 1, y: 0, scale: 1,
-                duration: 1.2, stagger: 0.1, ease: "expo.out"
+                duration: 1, stagger: 0.1, ease: "power3.out"
             });
         }
 
