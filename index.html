@@ -64,63 +64,430 @@
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
+        :root {
+            --accent: #ffffff;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #030303;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .reveal { 
+            opacity: 0; 
+            transform: translateY(40px) scale(0.98);
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+
+        .glass:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .header-glass {
+            background: rgba(3, 3, 3, 0.4);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .gradient-text {
+            background: linear-gradient(to bottom, #ffffff 40%, rgba(255,255,255,0.4) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            line-height: 1.1;
+            padding-bottom: 0.1em;
+        }
+
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(circle at center, black, transparent 80%);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        #spotlight {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(800px circle at var(--x) var(--y), rgba(255,255,255,0.06), transparent 40%);
+            z-index: 1;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        .magnetic-btn {
+            position: relative;
+            display: inline-block;
+            transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 10;
+        }
+
+        #milk-container {
+            position: relative;
+            width: 120px;
+            height: 160px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: none;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.01);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        #milk-container:hover {
+            transform: scale(1.05);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .milk-level {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            background: #ffffff;
+            transition: height 3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Surface Ripple - Only visible when milk is present */
+        .milk-level::after {
+            content: "";
+            position: absolute;
+            top: -5px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: #ffffff;
+            filter: blur(2px);
+            animation: ripple 2s ease-in-out infinite;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        #milk-container.is-active .milk-level::after {
+            opacity: 1;
+        }
+        
+        #milk-container.is-active .milk-level {
+            box-shadow: 0 -5px 15px rgba(255,255,255,0.3);
+        }
+
+        @keyframes ripple {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.4); }
+        }
+
+        .milk-stream {
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 200px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 30%, rgba(255,255,255,1) 100%);
+            opacity: 0;
+            border-radius: 5px;
+            filter: blur(1px);
+        }
+
+        .milk-particle {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .metric-badge {
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .metric-badge.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .float-anim { animation: float 8s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #030303; }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+    </style>
 </head>
 
-<body class="bg-black text-white font-sans">
+<body class="selection:bg-white selection:text-black">
 
-  <!-- HERO -->
-  <section class="min-h-screen flex items-center justify-center px-6">
-    <div class="max-w-3xl text-center space-y-6">
-      <h1 class="text-4xl md:text-5xl font-bold">
-        Track Your Daily Milk Consumption
-      </h1>
+    <div class="grid-bg"></div>
+    <div id="spotlight"></div>
 
-      <p class="text-gray-400 text-lg">
-        Milk Tracker helps households monitor daily milk usage, expenses,
-        and history with a simple and secure dashboard.
-      </p>
+    <nav class="fixed top-0 w-full z-50 px-8 py-6 flex justify-between items-center transition-all duration-500 header-glass" id="navbar">
+        <div class="flex items-center gap-3 group cursor-pointer">
+            <div class="p-2.5 glass rounded-xl group-hover:scale-110 transition-transform duration-500">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21C7 21 4 21 4 18V6C4 6 4 3 7 3H17C20 3 20 6 20 6V18C20 18 20 21 17 21H7Z"/><path d="M4 8H20"/></svg>
+            </div>
+            <span class="font-bold tracking-tight text-xl uppercase italic">MilkTracker</span>
+        </div>
+        <div class="flex items-center gap-8">
+            <a href="#features" class="hidden md:block text-sm font-medium text-gray-400 hover:text-white transition-colors uppercase tracking-widest">Features</a>
+            <a href="./frontend/loginRegister.html" class="glass px-8 py-3 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all">
+                Login
+            </a>
+        </div>
+    </nav>
 
-      <div class="flex justify-center gap-4">
-        <a
-          href="./frontend/loginRegister.html"
-          class="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200"
-        >
-          Login
-        </a>
-      </div>
-    </div>
-  </section>
+    <section id="hero" class="relative min-h-screen flex flex-col items-center justify-center px-6 pt-24 text-center overflow-hidden">
+        <div class="max-w-5xl space-y-10 z-10">
+            <div class="hero-reveal inline-flex items-center gap-3 glass px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-white/60 mb-4 reveal">
+                <span class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+                Digital Dairy Intelligence
+            </div>
+            
+            <h1 class="hero-reveal text-7xl md:text-[9rem] font-extrabold tracking-tighter gradient-text leading-[0.9] reveal">
+                Master your <br/>consumption.
+            </h1>
 
-  <!-- FEATURES -->
-  <section class="py-20 bg-[#111] px-6">
-    <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-8">
-      <div class="p-6 bg-[#1a1a1a] rounded-xl">
-        <h3 class="font-semibold text-lg">Daily Tracking</h3>
-        <p class="text-gray-400 mt-2">
-          Record milk consumption per day in litres or millilitres.
-        </p>
-      </div>
+            <p class="hero-reveal text-white/40 text-lg md:text-2xl max-w-2xl mx-auto font-light leading-relaxed reveal">
+                Experience a refined digital ecosystem designed to track, analyze, and optimize your supply.
+            </p>
 
-      <div class="p-6 bg-[#1a1a1a] rounded-xl">
-        <h3 class="font-semibold text-lg">Cost Calculation</h3>
-        <p class="text-gray-400 mt-2">
-          Automatic cost calculation based on your milk price.
-        </p>
-      </div>
+            <div class="hero-reveal btn-container pt-8 reveal">
+                <a href="./frontend/loginRegister.html" 
+                   class="magnetic-btn bg-white text-black px-12 py-5 rounded-2xl font-black text-lg hover:scale-105 transition-all shadow-2xl block">
+                    GET STARTED
+                </a>
+                <button class="magnetic-btn glass text-white px-12 py-5 rounded-2xl font-bold text-lg hover:bg-white/10 transition-all block border border-white/10">
+                    LIVE DEMO
+                </button>
+            </div>
 
-      <div class="p-6 bg-[#1a1a1a] rounded-xl">
-        <h3 class="font-semibold text-lg">History & Dashboard</h3>
-        <p class="text-gray-400 mt-2">
-          View monthly summaries and daily history easily.
-        </p>
-      </div>
-    </div>
-  </section>
+            <!-- Interactive Milk Drop & Glass with Metrics -->
+            <div class="hero-reveal flex flex-row items-center justify-center gap-8 pt-12 reveal">
+                <div class="flex flex-col items-center">
+                    <div id="milk-container" class="float-anim" title="Click for a Milk Shower">
+                        <div class="milk-stream" id="stream"></div>
+                        <div class="milk-level" id="level"></div>
+                    </div>
+                    <p class="text-[10px] tracking-[0.3em] uppercase text-white/30 animate-pulse mt-2">Tap for Freshness</p>
+                </div>
 
-  <!-- FOOTER -->
-  <footer class="py-6 text-center text-gray-500 text-sm">
-    © 2026 Milk Tracker
-  </footer>
+                <div id="metric-sidebar" class="text-left space-y-4 metric-badge">
+                    <div class="glass p-4 rounded-2xl border-l-4 border-white">
+                        <p class="text-[10px] uppercase tracking-widest text-white/40 mb-1">Live Volume</p>
+                        <p class="text-2xl font-bold tracking-tighter"><span id="volume-val">0</span>ml</p>
+                    </div>
+                    <div class="glass p-4 rounded-2xl border-l-4 border-white/20">
+                        <p class="text-[10px] uppercase tracking-widest text-white/40 mb-1">Live Cost</p>
+                        <p class="text-xl font-bold tracking-tight">₹<span id="cost-val">0.00</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
+    <!-- FEATURES SECTION -->
+    <section id="features" class="py-48 relative">
+        <div class="max-w-7xl mx-auto px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-32 gap-12 reveal">
+                <div class="max-w-2xl text-left">
+                    <h2 class="text-5xl md:text-7xl font-bold mb-8 tracking-tighter leading-none">Designed for <br/>the detail-oriented.</h2>
+                    <p class="text-white/40 text-xl font-light">Every interaction is polished. Every byte is purposeful.</p>
+                </div>
+                <div class="h-[1px] flex-grow bg-white/10 mb-6 hidden lg:block"></div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-10">
+                <div class="feature-card glass p-12 rounded-[3rem] group reveal">
+                    <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-10 group-hover:bg-white group-hover:text-black transition-all duration-500 text-2xl font-bold">
+                        ₹
+                    </div>
+                    <h3 class="text-3xl font-bold mb-6 tracking-tight">Precision Logs</h3>
+                    <p class="text-white/40 font-light leading-relaxed text-lg">Detailed timestamps and volume tracking with milliliter precision.</p>
+                </div>
+
+                <div class="feature-card glass p-12 rounded-[3rem] group reveal">
+                    <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-10 group-hover:bg-white group-hover:text-black transition-all duration-500">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15h0M12 15h0M17 15h0"/></svg>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-6 tracking-tight">Cost Velocity</h3>
+                    <p class="text-white/40 font-light leading-relaxed text-lg">Understand spending trends with real-time price adjustment engines.</p>
+                </div>
+
+                <div class="feature-card glass p-12 rounded-[3rem] group reveal">
+                    <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-10 group-hover:bg-white group-hover:text-black transition-all duration-500">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-6 tracking-tight">Deep Metrics</h3>
+                    <p class="text-white/40 font-light leading-relaxed text-lg">Beautifully rendered vector charts that expose consumption patterns.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-24 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-8 flex justify-between items-center">
+            <span class="font-bold tracking-widest uppercase">MilkTracker</span>
+            <p class="text-white/10 text-[10px] tracking-[0.4em] uppercase">© 2026 MILK TRACKER / ALL RIGHTS RESERVED</p>
+        </div>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Spotlight
+        window.addEventListener('mousemove', e => {
+            gsap.to('#spotlight', { '--x': `${e.clientX}px`, '--y': `${e.clientY}px`, duration: 0.1 });
+        });
+
+        // Fixed Magnetic Buttons
+        document.querySelectorAll('.magnetic-btn').forEach(btn => {
+            btn.addEventListener('mousemove', e => {
+                const rect = btn.getBoundingClientRect();
+                const x = (e.clientX - rect.left - rect.width/2) * 0.4;
+                const y = (e.clientY - rect.top - rect.height/2) * 0.4;
+                gsap.to(btn, { x, y, duration: 0.3, zIndex: 50 });
+            });
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)", zIndex: 10 });
+            });
+        });
+
+        // Milk Shower Logic
+        const milkContainer = document.getElementById('milk-container');
+        const level = document.getElementById('level');
+        const stream = document.getElementById('stream');
+        const metricSidebar = document.getElementById('metric-sidebar');
+        const volumeVal = document.getElementById('volume-val');
+        const costVal = document.getElementById('cost-val');
+        let isFilling = false;
+
+        const PRICE_PER_ML = 0.004; 
+
+        function createSplashParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'milk-particle';
+            const size = Math.random() * 6 + 2;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            
+            const rect = milkContainer.getBoundingClientRect();
+            particle.style.left = (rect.width / 2) + 'px';
+            particle.style.bottom = '10px';
+            
+            milkContainer.appendChild(particle);
+
+            const angle = (Math.random() - 0.5) * 1.5;
+            const distance = Math.random() * 40 + 20;
+
+            gsap.to(particle, {
+                x: Math.sin(angle) * distance,
+                y: -Math.random() * 50 - 20,
+                opacity: 0,
+                scale: 0.5,
+                duration: Math.random() * 0.5 + 0.3,
+                ease: "power1.out",
+                onComplete: () => particle.remove()
+            });
+        }
+
+        milkContainer.addEventListener('click', () => {
+            if(isFilling) return;
+            isFilling = true;
+
+            metricSidebar.classList.add('active');
+            milkContainer.classList.add('is-active');
+
+            // Start Stream
+            gsap.to(stream, { 
+                top: "0px", 
+                opacity: 1, 
+                height: "100%", 
+                duration: 0.6, 
+                ease: "power2.in" 
+            });
+
+            // Fill Glass
+            setTimeout(() => {
+                level.style.height = "90%";
+                
+                let count = { val: 0 };
+                gsap.to(count, {
+                    val: 250,
+                    duration: 3,
+                    onUpdate: () => {
+                        const currentVol = Math.floor(count.val);
+                        volumeVal.innerText = currentVol;
+                        costVal.innerText = (currentVol * PRICE_PER_ML).toFixed(2);
+                    }
+                });
+
+                const splashInterval = setInterval(() => {
+                    if(level.style.height === "0%") {
+                        clearInterval(splashInterval);
+                        return;
+                    }
+                    for(let i=0; i<3; i++) createSplashParticle();
+                }, 100);
+
+                setTimeout(() => clearInterval(splashInterval), 2500);
+
+            }, 400);
+
+            // Finish Stream
+            setTimeout(() => {
+                gsap.to(stream, { opacity: 0, top: "-200px", duration: 0.5 });
+                
+                setTimeout(() => {
+                    level.style.height = "0%";
+                    metricSidebar.classList.remove('active');
+                    milkContainer.classList.remove('is-active');
+                    isFilling = false;
+                }, 4000);
+            }, 3000);
+        });
+
+        function startAnimations() {
+            gsap.to(".reveal", {
+                opacity: 1, y: 0, scale: 1,
+                duration: 1.2, stagger: 0.1, ease: "expo.out"
+            });
+        }
+
+        window.addEventListener('load', startAnimations);
+    </script>
 </body>
 </html>
