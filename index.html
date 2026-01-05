@@ -118,7 +118,7 @@
                    class="magnetic-btn bg-white text-black w-full sm:w-auto px-10 md:px-14 py-4 md:py-5 rounded-xl md:rounded-2xl font-black text-sm md:text-lg hover:scale-105 transition-all shadow-2xl">
                     GET STARTED
                 </a>
-                <button class="magnetic-btn glass text-white w-full sm:w-auto px-10 md:px-14 py-4 md:py-5 rounded-xl md:rounded-2xl font-bold text-sm md:text-lg hover:bg-white/10 transition-all border border-white/10">
+                <button onclick="openVideoModal()" class="magnetic-btn glass text-white w-full sm:w-auto px-10 md:px-14 py-4 md:py-5 rounded-xl md:rounded-2xl font-bold text-sm md:text-lg hover:bg-white/10 transition-all border border-white/10">
                     LIVE DEMO
                 </button>
             </div>
@@ -192,6 +192,55 @@
             <p class="text-white/10 text-[8px] md:text-[10px] tracking-[0.2em] md:tracking-[0.4em] uppercase text-center">© 2026 MILK TRACKER / ALL RIGHTS RESERVED <br>Loganathan G P</p>
         </div>
     </footer>
+
+    <!-- Video Modal -->
+    <div id="video-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-md opacity-0 transition-all duration-300">
+        <div class="relative w-full max-w-4xl mx-4 sm:mx-auto">
+            <button onclick="closeVideoModal()" class="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors" aria-label="Close modal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <video id="demo-video" class="w-full rounded-2xl shadow-2xl border border-white/10 bg-black" controls controlsList="nodownload nofullscreen">
+                <source src="./assets/videos/milk-tracker-demo.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('video-modal');
+        const video = document.getElementById('demo-video');
+
+        function openVideoModal() {
+            modal.classList.remove('hidden');
+            // Small delay to allow display:flex to apply before opacity transition
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+            }, 10);
+        }
+
+        function closeVideoModal() {
+            modal.classList.add('opacity-0');
+            video.pause();
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                video.currentTime = 0;
+            }, 300);
+        }
+
+        // Close on backdrop click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeVideoModal();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                closeVideoModal();
+            }
+        });
+    </script>
 
 <!-- custom js -->
 <script src="./assets/js/script.js"></script>
