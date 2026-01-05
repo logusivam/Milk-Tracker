@@ -194,7 +194,7 @@ let dots = "";
 // duration start → green dot
 if (selectedDate === activeStartDate) {
   dots += `
-    <span class="absolute top-1 left-1 h-2 w-2 rounded-full bg-green-500"></span>
+    <span class="absolute top-1 right-1 h-2 w-2 rounded-full bg-green-500"></span>
   `;
 }
 
