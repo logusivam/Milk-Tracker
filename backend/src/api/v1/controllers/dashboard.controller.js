@@ -105,3 +105,33 @@ export const getMonthEntryDates = async (req, res) => {
     res.status(500).json({ message: "Failed to load month entries" });
   }
 };
+
+// GET /dashboard/month-meta?month=YYYY-MM
+export const getMonthDashboardMeta = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { month } = req.query;
+
+    if (!month) {
+      return res.status(400).json({ message: "Month required" });
+    }
+
+    const { start, end } = monthToDateRange(month);
+
+    const dashboards = await Dashboard.find({
+      user_id: userId,
+      start_date: { $lte: end },
+      $or: [
+        { end_date: null },
+        { end_date: { $gte: start } }
+      ]
+    })
+      .select("start_date end_date")
+      .lean();
+
+    res.json({ dashboards });
+  } catch {
+    res.status(500).json({ message: "Failed to load dashboard meta" });
+  }
+};
+

@@ -1,6 +1,8 @@
 // routes/dashboard.routes.js
 import express from "express";
-import { getMonthlyDashboard, getMonthEntryDates } from "../controllers/dashboard.controller.js";
+import { getMonthlyDashboard, getMonthEntryDates, 
+    getMonthDashboardMeta
+ } from "../controllers/dashboard.controller.js";
 import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -10,5 +12,6 @@ const router = express.Router();
  */
 router.get("/get-data", protect, getMonthlyDashboard);
 router.get("/month-entries", protect, getMonthEntryDates);
+router.get("/month-meta", protect, getMonthDashboardMeta);
 
 export default router;
