@@ -6,10 +6,11 @@ import { authFetch } from "./auth/auth-guard.js";
 // DASHBOARD LOGIC API
 // ==========================
 const API_URL = `${API_BASE_URL}/api/v1/dashboard/get-data`;
+const DASHBOARD_META_API = `${API_BASE_URL}/api/v1/dashboard/month-meta`;
 
 // variable to store the activedashboard data
-let activeStartDate = null;
-let activeEndDate = null;
+let activeStartDates = new Set();
+let activeEndDates = new Set();
 
 // home screen cards
 const totalLitresCard = document.querySelector(
@@ -41,10 +42,10 @@ const renderHistoryItem = ({ date, quantity, price }) => {
     <div class="flex flex-col justify-center">
       <p class="text-white text-base font-medium leading-normal line-clamp-1">
         ${new Date(date).toLocaleDateString("en-US", {
-          month: "long",
-          day: "numeric",
-          year: "numeric"
-        })}
+    month: "long",
+    day: "numeric",
+    year: "numeric"
+  })}
       </p>
       <p class="text-[#adadad] text-sm font-normal leading-normal line-clamp-2">
         ${mlToLitres(quantity)} L
@@ -60,6 +61,27 @@ const renderHistoryItem = ({ date, quantity, price }) => {
   return wrapper;
 };
 
+// Async load dashboard meta for duration start/end markers
+async function loadDashboardMeta(date) {
+  const month = `${date.getFullYear()}-${String(
+    date.getMonth() + 1
+  ).padStart(2, "0")}`;
+
+  const res = await authFetch(`${DASHBOARD_META_API}?month=${month}`);
+  if (!res.ok) return;
+
+  const { dashboards } = await res.json();
+
+  activeStartDates.clear();
+  activeEndDates.clear();
+
+  dashboards.forEach(d => {
+    if (d.start_date) activeStartDates.add(d.start_date);
+    if (d.end_date) activeEndDates.add(d.end_date);
+  });
+}
+
+// load dashboard data for the month like totals and history
 const loadDashboard = async (date = new Date()) => {
   try {
     const month = `${date.getFullYear()}-${String(
@@ -71,9 +93,6 @@ const loadDashboard = async (date = new Date()) => {
     if (!res.ok) throw new Error("Dashboard fetch failed");
 
     const { data } = await res.json();
-    activeStartDate = data.start_date || null;
-activeEndDate = data.end_date || null;
-
 
     // totals cards
     const totalQty = Number(data?.total_quantity || 0);
@@ -103,7 +122,6 @@ activeEndDate = data.end_date || null;
     //console.error(err);
   }
 };
-
 
 /* ==========================
    CALENDAR LOGIC (UNCHANGED)
@@ -137,8 +155,7 @@ async function loadMonthEntries(date) {
 /* ==========================
    RENDER CALENDAR
 ========================== */
-async function renderCalendar(date) {
-  await loadMonthEntries(date);
+async function renderCalendar(date) { 
 
   calendarGrid.innerHTML = `
     <p class="text-white text-[13px] font-bold flex h-12 items-center justify-center">S</p>
@@ -166,50 +183,50 @@ async function renderCalendar(date) {
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
-   const selectedDate = `${year}-${String(month + 1).padStart(
-  2,
-  "0"
-)}-${String(day).padStart(2, "0")}`;
+    const selectedDate = `${year}-${String(month + 1).padStart(
+      2,
+      "0"
+    )}-${String(day).padStart(2, "0")}`;
 
-const isToday =
-  day === today.getDate() &&
-  month === today.getMonth() &&
-  year === today.getFullYear();
+    const isToday =
+      day === today.getDate() &&
+      month === today.getMonth() &&
+      year === today.getFullYear();
 
-const hasEntry = entryDates.has(selectedDate);
+    const hasEntry = entryDates.has(selectedDate);
 
-// tick logic
-let tick = `
+    // tick logic
+    let tick = `
   <span class="absolute bottom-1 right-1 text-yellow-400 text-xs">✓</span>
 `;
 
-if (hasEntry) {
-  tick = `
+    if (hasEntry) {
+      tick = `
     <span class="absolute bottom-1 right-1 text-green-500 text-xs">✓</span>
   `;
-}
+    }
 
-let dots = "";
+    let dots = "";
 
-// duration start → green dot
-if (selectedDate === activeStartDate) {
-  dots += `
+    // duration start → green dot
+    if (activeStartDates.has(selectedDate)) {
+      dots += `
     <span class="absolute top-1 right-1 h-2 w-2 rounded-full bg-green-500"></span>
   `;
-}
+    }
 
-// duration end → red dot
-if (activeEndDate && selectedDate === activeEndDate) {
-  dots += `
+    // duration end → red dot
+    if (activeEndDates.has(selectedDate)) {
+      dots += `
     <span class="absolute top-1 left-1 h-2 w-2 rounded-full bg-red-500"></span>
   `;
-}
+    }
 
 
-// today override
-const bgClass = isToday ? "bg-black" : "";
+    // today override
+    const bgClass = isToday ? "bg-black" : "";
 
-calendarGrid.innerHTML += `
+    calendarGrid.innerHTML += `
   <button
     class="relative h-12 w-full text-white text-sm font-medium leading-normal date-btn"
     data-date="${selectedDate}"
@@ -232,23 +249,37 @@ function openAddEntry(date) {
   window.location.href = `addEntry.html?date=${date}`;
 }
 
-prevBtn.addEventListener("click", () => {
+// load both calendar entries and dashboard data
+async function loadCalendarAndDashboard(date) {
+  await Promise.all([
+    loadMonthEntries(date),   // fills entryDates
+    loadDashboard(date),       // sets activeStartDate / activeEndDate
+    loadDashboardMeta(date)   // start/end markers (cross-month)
+  ]);
+
+  renderCalendar(date);       // render ONLY after data is ready
+}
+
+// navigation buttons
+prevBtn.addEventListener("click", async () => {
   currentDate.setMonth(currentDate.getMonth() - 1);
-  renderCalendar(currentDate);
-    loadDashboard(currentDate);
+  await loadCalendarAndDashboard(currentDate);
 });
 
-nextBtn.addEventListener("click", () => {
+nextBtn.addEventListener("click", async () => {
   currentDate.setMonth(currentDate.getMonth() + 1);
-  renderCalendar(currentDate);
-    loadDashboard(currentDate);
+  await loadCalendarAndDashboard(currentDate);
 });
 
+// date button click
 calendarGrid.addEventListener("click", (e) => {
   const btn = e.target.closest(".date-btn");
   if (!btn) return;
   openAddEntry(btn.dataset.date);
 });
 
-document.addEventListener("DOMContentLoaded", () => loadDashboard(currentDate));
-renderCalendar(currentDate);
+// initial load
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadCalendarAndDashboard(currentDate);
+});
+
