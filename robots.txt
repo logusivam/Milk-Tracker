@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /frontend/index.html
+Disallow: /frontend/history.html
+Disallow: /frontend/addEntry.html
+Disallow: /frontend/settings.html
+
+Sitemap: https://milk-tracker-s4i1.onrender.com/sitemap.xml

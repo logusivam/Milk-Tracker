@@ -28,29 +28,37 @@ async function refreshAccessToken() {
 ========================== */
 export async function verifyAuth() {
   try {
-    // Attempt silent refresh
-    const token = await refreshAccessToken();
+    // 1️⃣ Try using existing access token (memory)
+    if (accessToken) {
+      const res = await fetch(`${AUTH_API}/me`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        credentials: "include"
+      });
 
-    if (!token) {
-      window.location.replace("loginregister.html");
+      if (res.ok) return;
+    }
+
+    // 2️⃣ ONLY refresh if needed
+    const refreshed = await refreshAccessToken();
+    if (!refreshed) {
+      window.location.replace("loginRegister.html");
       return;
     }
 
-    // Optional: verify token with backend protected route
+    // 3️⃣ Verify again
     const res = await fetch(`${AUTH_API}/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
+      headers: { Authorization: `Bearer ${accessToken}` },
       credentials: "include"
     });
 
     if (!res.ok) {
-      window.location.replace("loginregister.html");
+      window.location.replace("loginRegister.html");
     }
   } catch {
-    window.location.replace("loginregister.html");
+    window.location.replace("loginRegister.html");
   }
 }
+
 
 /* ==========================
    AUTH FETCH WRAPPER
@@ -73,7 +81,7 @@ export async function authFetch(url, options = {}) {
   if (res.status === 401) {
     const refreshed = await refreshAccessToken();
     if (!refreshed) {
-      window.location.replace("loginregister.html");
+      window.location.replace("loginRegister.html");
       return;
     }
 
@@ -93,7 +101,7 @@ export async function logout() {
   } catch (e) {
     // ignore errors
   } finally {
-    window.location.replace("loginregister.html");
+    window.location.replace("loginRegister.html");
   }
 }
 

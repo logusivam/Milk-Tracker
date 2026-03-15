@@ -15,7 +15,7 @@ loginForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const email = loginForm.querySelector('input[type="text"]').value;
-  const password = loginForm.querySelector('input[type="password"]').value;
+  const password = loginForm.querySelector('input.password-input').value;
 
   try {
     const res = await fetch(`${API_URL}/login`, {
@@ -49,7 +49,7 @@ signupForm?.addEventListener("submit", async (e) => {
 
   const name = signupForm.querySelector('input[type="text"]').value;
   const email = signupForm.querySelectorAll('input[type="text"]')[1].value;
-  const password = signupForm.querySelector('input[type="password"]').value;
+  const password = signupForm.querySelector('input.password-input').value;
 
   try {
     const res = await fetch(`${API_URL}/register`, {
@@ -71,4 +71,17 @@ signupForm?.addEventListener("submit", async (e) => {
   } catch {
     alert("Network error. Please try again.");
   }
+});
+
+// Password visibility toggle
+document.querySelectorAll('.toggle-password').forEach(eye => {
+  eye.addEventListener('click', () => {
+    const input = eye.parentElement.querySelector('input.password-input');
+    if (!input) return;
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    eye.classList.toggle('fa-eye');
+    eye.classList.toggle('fa-eye-slash');
+    eye.setAttribute('title', isPassword ? 'Hide password' : 'Show password');
+  });
 });

@@ -1,35 +1,55 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="./assets/css/loginRegister.css">
-    <!-- Fontawesome CDN Link -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   </head>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Login – Milk Tracker</title>
+
+  <meta
+    name="description"
+    content="Login to Milk Tracker to securely track daily milk consumption and expenses."
+  />
+
+  <meta name="robots" content="index, follow" />
+
+  <link rel="shortcut icon" href="./assets/images/icon-v2.png" />
+  <link rel="stylesheet" href="./assets/css/loginRegister.css" />
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
+</head>
+
+
 <body>
   <div class="container">
     <input type="checkbox" id="flip">
     <div class="cover">
       <div class="front">
-        <img src="./assets/images/frontImg.jpg" alt="">
+        <img src="./assets/images/frontImg.png" alt="">
         <div class="text">
-          <span class="text-1">Every new friend is a <br> new adventure</span>
+          <span class="text-1">LOGIN TO START YOUR <br> DAIRY JOURNEY</span>
           <span class="text-2">Let's get connected</span>
         </div>
       </div>
       <div class="back">
-        <img class="backImg" src="./assets/images/backImg.jpg" alt="">
+        <img class="backImg" src="./assets/images/backImg.png" alt="">
         <div class="text">
-          <span class="text-1">Complete miles of journey <br> with one step</span>
+          <span class="text-1">REGISTER AND GROW WITH <br> ONE STEP</span>
           <span class="text-2">Let's get started</span>
         </div>
       </div>
     </div>
     <div class="forms">
-        <div class="form-content">
-          <div class="login-form">
-            <div class="title">Login</div>
+      <div class="form-content">
+        <div class="login-form">
+          <a href="../index.html" style="position: absolute; top: 10px; font-size: 18px; color: #ffffff; z-index: 50;" title="Go to Home">
+            <i class="fas fa-home"></i>
+          </a>
+          <div class="title">Login</div>
           <form action="#">
             <div class="input-boxes">
               <div class="input-box">
@@ -38,7 +58,8 @@
               </div>
               <div class="input-box">
                 <i class="fas fa-lock"></i>
-                <input type="password" placeholder="Enter your password" required>
+                <input type="password" placeholder="Enter your password" required class="password-input">
+                <i class="fas fa-eye toggle-password" title="Show password"></i>
               </div>
               <div class="text"><a href="#">Forgot password?</a></div>
               <div class="button input-box">
@@ -46,11 +67,11 @@
               </div>
               <div class="text sign-up-text">Don't have an account? <label for="flip">Sigup now</label></div>
             </div>
-        </form>
-      </div>
+          </form>
+        </div>
         <div class="signup-form">
           <div class="title">Signup</div>
-        <form action="#">
+          <form action="#">
             <div class="input-boxes">
               <div class="input-box">
                 <i class="fas fa-user"></i>
@@ -62,20 +83,22 @@
               </div>
               <div class="input-box">
                 <i class="fas fa-lock"></i>
-                <input type="password" placeholder="Enter your password" required>
+                <input type="password" placeholder="Enter your password" required class="password-input">
+                <i class="fas fa-eye toggle-password" title="Show password"></i>
               </div>
               <div class="button input-box">
                 <input type="submit" value="Sumbit">
               </div>
               <div class="text sign-up-text">Already have an account? <label for="flip">Login now</label></div>
             </div>
-      </form>
-    </div>
-    </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- custom js -->
   <script type="module" src="./assets/js/loginRegister.js"></script>
 </body>
+
 </html>

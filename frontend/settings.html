@@ -10,9 +10,24 @@
       href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B700%3B800"
     />
 
-    <title>Stitch Design</title>
-    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+    <title>Settings - Milk Tracker</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/x-icon" href="./assets/images/icon-v2.png" />
 
+    <!-- To ignore the CDN tailwind warn -->
+    <script>
+      const originalWarn = console.warn;
+      console.warn = function (...args) {
+        if (
+          typeof args[0] === "string" &&
+          args[0].includes("cdn.tailwindcss.com")
+        ) {
+          return;
+        }
+        originalWarn.apply(console, args);
+      };
+    </script>
+    
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   </head>
   <body>
@@ -22,16 +37,19 @@
     >
       <div>
         <div class="flex items-center bg-[#1a1a1a] p-4 pb-2 justify-between">
-          <div class="text-white flex size-12 shrink-0 items-center" data-icon="ArrowLeft" data-size="24px" data-weight="regular">
+          <div id="backBtn" class="text-white flex size-12 shrink-0 items-center" data-icon="ArrowLeft" data-size="24px"
+            data-weight="regular">
             <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-              <path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
+              <path
+                d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z">
+              </path>
             </svg>
           </div>
           <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Settings</h2>
         </div>
         <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-14 justify-between">
           <p class="text-white text-base font-normal leading-normal flex-1 truncate">Price per litre</p>
-          <div class="shrink-0"><input id="priceInput" type="text" value="Rs. 2.50"
+          <div class="shrink-0"><input id="priceInput" type="text" value="--"
               class="bg-transparent text-white text-base font-normal leading-normal text-right w-28 outline-none" /></div>
           </div>
         <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-14 justify-between">
@@ -61,7 +79,7 @@
         <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-14 justify-between">
           <p class="text-white text-base font-normal leading-normal flex-1 truncate">Default Milk Value</p>
           <div class="shrink-0 flex items-center gap-2">
-            <input id="milkValue" type="text" inputmode="numeric" value="400"
+            <input id="milkValue" type="text" inputmode="numeric" value="--"
               class="bg-transparent text-white text-base font-normal leading-normal w-16 text-right outline-none text-sm" />
             <select id="milkUnit" class="bg-transparent text-white text-base font-normal leading-normal outline-none text-sm">
               <option value="ml" class="text-black">ML</option>
@@ -69,8 +87,32 @@
             </select>
           </div>
         </div>
+        <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-14 justify-between">
+          <p class="text-white text-base font-normal leading-normal flex-1 truncate">
+            Start Date
+          </p>
+          <input id="startDate" type="date"
+            class="bg-transparent text-white text-base font-normal leading-normal outline-none" />
+        </div>
+        
+        <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-14 justify-between">
+          <p class="text-white text-base font-normal leading-normal flex-1 truncate">
+            End Date
+          </p>
+          <div id="endDateWrapper" class="flex flex-col items-end">
+          <input id="endDate" type="date" class="bg-transparent text-white text-base font-normal leading-normal outline-none" />
+        </div>
+        </div>
       </div>
       <div>
+        <div class="flex px-4 py-3">
+          <button
+            id="saveSettingsBtn"
+            class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-5 flex-1 bg-black text-white text-base font-bold leading-normal tracking-[0.015em]"
+          >
+            <span class="truncate">Save</span>
+          </button>
+        </div>
         <div class="flex gap-2 border-t border-[#363636] bg-neutral-800 px-4 pb-3 pt-2">
           <a class="just flex flex-1 flex-col items-center justify-end gap-1 text-[#adadad]" href="index.html">
             <div class="text-[#adadad] flex h-8 items-center justify-center" data-icon="House" data-size="24px" data-weight="regular">
@@ -106,5 +148,9 @@
         <div class="h-5 bg-neutral-800"></div>
       </div>
     </div>
+
+    <!-- custom js -->
+     <script type="module" src="./assets/js/auth/auth-guard.js"></script>
+    <script type="module" src="./assets/js/settings.js"></script>
   </body>
 </html>

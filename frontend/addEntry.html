@@ -9,9 +9,25 @@
       href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B700%3B800"
     />
 
-    <title>Stitch Design</title>
-    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+    <title>Add Entry - Milk Tracker</title>
+    <meta name="robots" content="noindex, nofollow" />
 
+    <link rel="icon" type="image/x-icon" href="./assets/images/icon-v2.png" />
+
+    <!-- To ignore the CDN tailwind warn -->
+    <script>
+      const originalWarn = console.warn;
+      console.warn = function (...args) {
+        if (
+          typeof args[0] === "string" &&
+          args[0].includes("cdn.tailwindcss.com")
+        ) {
+          return;
+        }
+        originalWarn.apply(console, args);
+      };
+    </script>
+    
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   </head>
   <body>
@@ -32,11 +48,13 @@
             <label class="flex flex-row min-w-40 flex-1 gap-6 items-center">
                 <!-- Dropdown instead of static label -->
                 <select
+                  id="unitSelect"
                     class="bg-transparent text-white text-base font-medium leading-normal focus:outline-none border-none focus:ring-0 ml=-2">
                     <option class="bg-[#1a1a1a]" value="litres">Litres</option>
                     <option class="bg-[#1a1a1a]" value="ml">ML</option>
                 </select>
                 <input
+                  id="quantityInput"
                     class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border-none bg-[#363636] focus:border-none h-14 placeholder:text-[#adadad] p-4 text-base font-normal leading-normal"
                     value="" />
             </label>
@@ -46,6 +64,7 @@
             <p class="text-white text-base font-medium leading-normal pb-2 pl-4">Cost</p>
             <div class="flex w-full flex-1 items-stretch rounded-xl">
               <input
+                id="costInput"
                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border-none bg-[#363636] focus:border-none h-14 placeholder:text-[#adadad] p-4 rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
                 value=""
               />
@@ -64,14 +83,14 @@
         <div class="flex items-center gap-4 bg-[#1a1a1a] px-4 min-h-[72px] py-2 justify-between">
           <div class="flex flex-col justify-center">
             <p class="text-white text-base font-medium leading-normal line-clamp-1">Default Milk Value</p>
-            <p class="text-[#adadad] text-sm font-normal leading-normal line-clamp-2">2.0 Litres</p>
+            <p id="defaultMilkLabel" class="text-[#adadad] text-sm font-normal leading-normal line-clamp-2">0 Litres</p>
           </div>
           <div class="shrink-0">
             <label
               class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-[#363636] p-0.5 has-[:checked]:justify-end has-[:checked]:bg-black"
             >
               <div class="h-full w-[27px] rounded-full bg-white" style="box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 8px, rgba(0, 0, 0, 0.06) 0px 3px 1px;"></div>
-              <input type="checkbox" class="invisible absolute" />
+              <input id="defaultToggle" type="checkbox" class="invisible absolute" />
             </label>
           </div>
         </div>
@@ -80,6 +99,7 @@
       <div>
         <div class="flex px-4 py-3">
           <button
+            id="saveEntryBtn"
             class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-5 flex-1 bg-black text-white text-base font-bold leading-normal tracking-[0.015em]"
           >
             <span class="truncate">Save</span>
@@ -122,6 +142,7 @@
     </div>
 
     <!-- custom js -->
+     <script type="module" src="./assets/js/auth/auth-guard.js"></script>
      <script type="module" src="./assets/js/addEntry.js"></script>
   </body>
 </html>
