@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+
+:root {
+    --accent: #ffffff;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #030303;
+    color: #ffffff;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.glass:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.header-glass {
+    background: rgba(3, 3, 3, 0.6);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.gradient-text {
+    background: linear-gradient(to bottom, #ffffff 40%, rgba(255, 255, 255, 0.4) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    line-height: 1.1;
+    padding-bottom: 0.1em;
+}
+
+.grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at center, black, transparent 85%);
+    z-index: -2;
+    pointer-events: none;
+}
+
+#spotlight {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: radial-gradient(600px circle at var(--x) var(--y), rgba(255, 255, 255, 0.05), transparent 40%);
+    z-index: 1;
+}
+
+.magnetic-btn {
+    position: relative;
+    display: inline-block;
+    transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+    z-index: 10;
+}
+
+#milk-container {
+    position: relative;
+    width: 100px;
+    height: 140px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top: none;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.01);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+@media (min-width: 768px) {
+    #milk-container {
+        width: 120px;
+        height: 160px;
+    }
+}
+
+.milk-level {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: #ffffff;
+    transition: height 3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.milk-level::after {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: #ffffff;
+    filter: blur(2px);
+    animation: ripple 2s ease-in-out infinite;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+#milk-container.is-active .milk-level::after {
+    opacity: 1;
+}
+
+#milk-container.is-active .milk-level {
+    box-shadow: 0 -5px 15px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes ripple {
+
+    0%,
+    100% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(1.4);
+    }
+}
+
+.milk-stream {
+    position: absolute;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 200px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 30%, rgba(255, 255, 255, 1) 100%);
+    opacity: 0;
+    border-radius: 4px;
+    filter: blur(1px);
+}
+
+.milk-particle {
+    position: absolute;
+    background: #ffffff;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.metric-badge {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.metric-badge.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.float-anim {
+    animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(2deg);
+    }
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: #030303;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
