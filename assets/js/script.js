@@ -119,3 +119,12 @@ function startAnimations() {
 }
 
 window.addEventListener('load', startAnimations);
+
+// Dynamic Year Display footer
+const startYear = 2026; // Set your website's launch year here
+const currentYear = new Date().getFullYear();
+
+// Check if the current year is greater than the start year
+const displayYear = startYear === currentYear ? startYear : `${startYear} - ${currentYear}`;
+
+document.getElementById('year').innerText = displayYear;
