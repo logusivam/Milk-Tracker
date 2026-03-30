@@ -3,7 +3,7 @@ import Entry from "../../../models/entry.model.js";
 import Settings from "../../../models/settings.model.js";
 import cache, {
   settingsCacheKey,
-  entryCacheKey
+  entryCacheKey, invalidateUserDashboards, invalidateUserHistory
 } from "../../../utils/cache.js";
 
 export const saveEntry = async (req, res) => {
@@ -44,6 +44,10 @@ export const saveEntry = async (req, res) => {
 
     // 4️⃣ cache entry
     cache.set(entryCacheKey(userId, date), entry);
+
+    // 5️⃣ Cache Invalidation: Clear the dashboard cache so the next GET requests fresh data
+    invalidateUserDashboards(userId);
+    invalidateUserHistory(userId);
 
     res.json(entry);
   } catch (err) {
